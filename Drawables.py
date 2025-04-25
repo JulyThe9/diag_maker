@@ -3,6 +3,8 @@ from enum import Enum
 import math
 import pygame
 
+from DrawableProps import DrawableProps, BasicPoint
+
 class ShapeType(Enum):
     BLOCK = "block"
     ARROW = "arrow"
@@ -31,6 +33,11 @@ class Drawable:
         """Draw the object on the surface."""
         pass
 
+    @abstractmethod
+    def get_next_ref_point(self):
+        """Draw the object on the surface."""
+        pass
+
     def is_mouse_over(self, mouse_pos):
         # Default implementation for the base class (return False or check for a block)
         return False
@@ -44,6 +51,7 @@ class Block(Drawable):
     def __init__(self, posX, posY, sizeX, sizeY):
         # Call the parent (Drawable) class constructor
         super().__init__(ShapeType.BLOCK, posX, posY, sizeX, sizeY)
+        self.props = DrawableProps(next_ref_point=BasicPoint(posX + sizeX, posY + sizeY / 2))
 
     def calc_properties(self):
         # Block doesn't need any special calculations, so this method is empty.
@@ -55,6 +63,9 @@ class Block(Drawable):
             print("OVER BLOCK")
             res = True
         return res
+
+    def get_next_ref_point(self):
+        return self.props.next_ref_point
 
     def draw(self, surface):
         # Draw a simple rectangle for Block
