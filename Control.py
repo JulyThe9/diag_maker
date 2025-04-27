@@ -26,9 +26,19 @@ class Control:
                 drawable.is_mouse_over(event.pos)
 
             if self.dragging_object:
+                # self
                 new_posX = event.pos[0] - self.mouse_offset[0]
                 new_posY = event.pos[1] - self.mouse_offset[1]
+
+                delta_x = new_posX - self.dragging_object.posX
+                delta_y = new_posY - self.dragging_object.posY
+
                 self.dragging_object.set_position(new_posX, new_posY)
+
+                # children
+                for child in self.dragging_object.attachedDrawables:
+                    move_with_parent(child, delta_x, delta_y)
+
 
         elif event.type == pygame.MOUSEBUTTONUP:
             # Stop dragging when the mouse button is released
@@ -44,3 +54,10 @@ class Control:
         for drawable in self.drawables:
             color = style.get_color(drawable.shape_type)
             drawable.set_color(color)
+
+
+# free functions
+def move_with_parent(drawable, delta_x, delta_y):
+    drawable.set_position(drawable.posX + delta_x, drawable.posY + delta_y)
+    for child in drawable.attachedDrawables:
+        move_with_parent(child, delta_x, delta_y)

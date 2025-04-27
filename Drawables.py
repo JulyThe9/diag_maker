@@ -3,7 +3,8 @@ from enum import Enum
 import math
 import pygame
 
-from DrawableProps import DrawableProps, BasicPoint
+from DrawableProps import DrawableProps
+from BasicPoint import BasicPoint
 
 class ShapeType(Enum):
     BLOCK = "block"
@@ -19,6 +20,10 @@ class Drawable:
         self.sizeX = sizeX
         self.sizeY = sizeY
         self.color = (0, 0, 0)
+        self.attachedDrawables = []
+
+    def attach(self, drawable):
+        self.attachedDrawables.append(drawable)
 
     def set_color(self, color):
         self.color = color

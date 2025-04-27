@@ -1,7 +1,4 @@
-class BasicPoint:
-    def __init__(self, x=0, y=0):
-        self.x = x
-        self.y = y
+import BasicPoint
 
 class DrawableProps:
     def __init__(self, next_ref_point=None):

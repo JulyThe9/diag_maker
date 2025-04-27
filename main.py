@@ -4,6 +4,7 @@ import sys
 import Drawables as dr
 import Control as ctrl
 import Style
+import GlobalProps as glprops
 
  # Colors
 MISC_WHITE = (255, 255, 255)
@@ -24,15 +25,29 @@ def init():
     # Track current window size
     current_width, current_height = initial_width, initial_height
 
+
+    global_props = glprops.GlobalProps(current_width, current_height)
+    glprops.first_pos(global_props)
+
     control = ctrl.Control()
 
-    block1 = dr.Block(posX=100, posY=150, sizeX=50, sizeY=50)
+    block1 = dr.Block(posX=global_props.get_next_pos().x, posY=global_props.get_next_pos().y, sizeX=50, sizeY=50)
     control.add_drawable(block1)  
 
     posX = block1.get_next_ref_point().x
     posY = block1.get_next_ref_point().y
-    control.add_drawable(dr.Arrow(posX=posX, posY=posY,
-        endX=posX+100, endY=posY))  
+    arrow1 = dr.Arrow(posX=posX, posY=posY, endX=posX+100, endY=posY)
+    control.add_drawable(arrow1)
+
+    block1.attach(arrow1)
+
+    posX = arrow1.posX + arrow1.sizeX
+
+    # TODO: moving NON-horizontal line is NOT IMPLEMENTED
+    arrow2 = dr.Arrow(posX=posX, posY=posY, endX=posX+100, endY=posY)
+    control.add_drawable(arrow2)
+
+    arrow1.attach(arrow2)
 
     control.apply_styling(Style.colorful_style)
 
