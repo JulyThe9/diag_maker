@@ -5,10 +5,14 @@ import Drawables as dr
 import Control as ctrl
 import Style
 import GlobalProps as glprops
+import Functional as fn
+import Globals as g
+from DrawableProps import Sides
 
  # Colors
 MISC_WHITE = (255, 255, 255)
 MISC_LINE_COLOR = (0, 0, 0)  # Black
+
 
 def init():
     # Initialize Pygame
@@ -25,39 +29,22 @@ def init():
     # Track current window size
     current_width, current_height = initial_width, initial_height
 
-
-    global_props = glprops.GlobalProps(current_width, current_height)
-    glprops.first_pos(global_props)
+    g.global_props = glprops.GlobalProps(current_width, current_height)
+    glprops.first_pos(g.global_props)
 
     control = ctrl.Control()
-
-    block1 = dr.Block(posX=global_props.get_next_pos().x, posY=global_props.get_next_pos().y, sizeX=50, sizeY=50)
-    control.add_drawable(block1)  
-
-    posX = block1.get_next_ref_point().x
-    posY = block1.get_next_ref_point().y
-    arrow1 = dr.Arrow(posX=posX, posY=posY, endX=posX+100, endY=posY)
-    control.add_drawable(arrow1)
-
-    block1.attach(arrow1)
-
-    posX = arrow1.posX + arrow1.sizeX
-
-    # TODO: moving NON-horizontal line is NOT IMPLEMENTED
-    arrow2 = dr.Arrow(posX=posX, posY=posY, endX=posX+100, endY=posY)
-    control.add_drawable(arrow2)
-
-    arrow1.attach(arrow2)
-
-    control.apply_styling(Style.colorful_style)
 
     return screen, control
 
 
 
 def main():
-
     screen, control = init()
+
+    arrow2 = fn.add_test(control)
+    fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
+
+    control.apply_styling(Style.colorful_style)
 
     # Main loop
     running = True

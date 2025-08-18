@@ -12,7 +12,12 @@ class GlobalProps:
         self.next_position = bp.BasicPoint(x, y)
 
     def get_next_pos(self):
-        return self.next_position
+        cur_next_pos = self.next_position
+
+        x = cur_next_pos.x + self.win_width / 2
+        self.set_next_pos(x, self.next_position.y)
+
+        return cur_next_pos
 
     def __repr__(self):
         return f"GlobalProps(next_position={self.next_position})"

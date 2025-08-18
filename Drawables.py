@@ -3,7 +3,7 @@ from enum import Enum
 import math
 import pygame
 
-from DrawableProps import DrawableProps
+from DrawableProps import DrawableProps, Sides
 from BasicPoint import BasicPoint
 
 class ShapeType(Enum):
@@ -43,6 +43,11 @@ class Drawable:
         """Draw the object on the surface."""
         pass
 
+    @abstractmethod
+    def set_pos_from_ref(self, ref_point, side):
+        """Calc main pos from ref pos."""
+        pass
+
     def is_mouse_over(self, mouse_pos):
         # Default implementation for the base class (return False or check for a block)
         return False
@@ -50,17 +55,48 @@ class Drawable:
     def set_position(self, x, y):
         self.posX = x
         self.posY = y
+        
+    def get_next_ref_point(self, update=False):
+        return self.props.get_next_ref_point(update)
+
+    def get_ref_point(self, side, update=False):
+        return self.props.get_ref_point(side, update)
+
+    def mark_ref_point_used(self, side):
+        self.props.mark_ref_point_used(side)
 
 
 class Block(Drawable):
     def __init__(self, posX, posY, sizeX, sizeY):
         # Call the parent (Drawable) class constructor
         super().__init__(ShapeType.BLOCK, posX, posY, sizeX, sizeY)
-        self.props = DrawableProps(next_ref_point=BasicPoint(posX + sizeX, posY + sizeY / 2))
+        self.props = DrawableProps()
+        self.populate_ref_points()
+
+    def populate_ref_points(self):
+        self.props.add_ref_point(Sides.W, BasicPoint(self.posX, self.posY + self.sizeY / 2)) # A
+        self.props.add_ref_point(Sides.N, BasicPoint(self.posX + self.sizeX / 2, self.posY)) # B
+        self.props.add_ref_point(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY + self.sizeY / 2)) # C
+        self.props.add_ref_point(Sides.S, BasicPoint(self.posX + self.sizeX / 2, self.posY + self.sizeY)) # D
 
     def calc_properties(self):
         # Block doesn't need any special calculations, so this method is empty.
         pass
+
+    def set_pos_from_ref(self, ref_point, side):
+        bp = None
+        if side == Sides.W:
+            bp = BasicPoint(self.posX, self.posY - self.sizeY / 2)
+        elif side == Sides.N:
+            bp = BasicPoint(self.posX - self.sizeX / 2, self.posY)
+        elif side == Sides.E:
+            bp = BasicPoint(self.posX - self.sizeX, self.posY - self.sizeY / 2)
+        elif side == Sides.S:
+            bp = BasicPoint(self.posX - self.sizeX / 2, self.posY - self.sizeY)
+
+        if bp:
+            self.set_position(bp.x, bp.y)
+            
 
     def is_mouse_over(self, mouse_pos):
         res = False
@@ -68,9 +104,6 @@ class Block(Drawable):
             print("OVER BLOCK")
             res = True
         return res
-
-    def get_next_ref_point(self):
-        return self.props.next_ref_point
 
     def draw(self, surface):
         # Draw a simple rectangle for Block
@@ -84,6 +117,13 @@ class Arrow(Drawable):
         self.endX = endX
         self.endY = endY
         self.calc_properties()
+        self.props = DrawableProps()
+        self.populate_ref_points()
+        
+        
+    def populate_ref_points(self):
+        self.props.add_ref_point(Sides.W, BasicPoint(self.posX, self.posY))
+        self.props.add_ref_point(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY))
 
     def calc_properties(self):
         # Calculate the properties needed for drawing the arrow
@@ -126,6 +166,9 @@ class Arrow(Drawable):
 
         # Return the bounding box as (x, y, width, height)
         return (bounding_x, bounding_y, width, height)
+
+    # def get_next_ref_point(self):
+    #     return self.props.next_ref_point
 
     def set_position(self, posX, posY):
         """
