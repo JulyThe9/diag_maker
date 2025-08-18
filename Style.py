@@ -10,9 +10,11 @@ class Style:
 classic_style = Style({
     ShapeType.BLOCK: (220, 220, 220),  # light gray
     ShapeType.ARROW: (0, 0, 0),        # black
+    ShapeType.VERTBAR: (0, 0, 0),        # black
 })
 
 colorful_style = Style({
     ShapeType.BLOCK: (255, 200, 200),  # light red
     ShapeType.ARROW: (0, 100, 255),    # blue
+    ShapeType.VERTBAR: (0, 100, 255),  # blue
 })

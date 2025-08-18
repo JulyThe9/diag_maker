@@ -9,7 +9,9 @@ from BasicPoint import BasicPoint
 class ShapeType(Enum):
     BLOCK = "block"
     ARROW = "arrow"
+    VERTBAR = "vertbar"
 
+# =================================================== DRAWABLE ===================================================
 class Drawable:
     def __init__(self, shape_type: ShapeType, posX: int, posY: int, sizeX: int, sizeY: int):
         if not isinstance(shape_type, ShapeType):
@@ -66,6 +68,7 @@ class Drawable:
         self.props.mark_ref_point_used(side)
 
 
+# =================================================== BLOCK ===================================================
 class Block(Drawable):
     def __init__(self, posX, posY, sizeX, sizeY):
         # Call the parent (Drawable) class constructor
@@ -109,7 +112,7 @@ class Block(Drawable):
         # Draw a simple rectangle for Block
         pygame.draw.rect(surface, self.color, (self.posX, self.posY, self.sizeX, self.sizeY))
 
-
+# =================================================== ARROW ===================================================
 class Arrow(Drawable):
     def __init__(self, posX, posY, endX, endY):
         # Arrow specific initialization
@@ -196,3 +199,67 @@ class Arrow(Drawable):
     def draw(self, surface):
         pygame.draw.line(surface, self.color, self.start, self.end, 2)
         pygame.draw.polygon(surface, self.color, [self.end, self.left, self.right])
+
+
+
+# =================================================== VERTBAR ===================================================
+class VertBar(Drawable):
+    def __init__(self, posX, posY, endX, endY):
+        # Arrow specific initialization
+        super().__init__(ShapeType.VERTBAR, posX, posY, 0, abs(endY-posY))
+        self.endX = endX
+        self.endY = endY
+        self.calc_properties()
+        self.props = DrawableProps()
+        #self.populate_ref_points()
+        
+        
+    # def populate_ref_points(self):
+    #     self.props.add_ref_point(Sides.W, BasicPoint(self.posX, self.posY))
+    #     self.props.add_ref_point(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY))
+
+    def calc_properties(self):
+        self.start = (self.posX, self.posY)
+        self.end = (self.endX, self.endY)
+
+        self.bounding_box = self.calc_bounding_box()
+        x, y, width, height = self.bounding_box
+        print(f"Bounding Box - X: {x}, Y: {y}, Width: {width}, Height: {height}")
+    
+    def calc_bounding_box(self):
+        # Calculate the height of the bounding box as the distance between start and end points
+        height = math.hypot(self.end[0] - self.posX, self.end[1] - self.posY)
+        
+        # TODO: pixels?
+        width = 20
+    
+        bounding_x = self.posX
+        bounding_y = self.posY - height / 2.0
+
+        # Return the bounding box as (x, y, width, height)
+        return (bounding_x, bounding_y, width, height)
+
+    # def get_next_ref_point(self):
+    #     return self.props.next_ref_point
+
+    def set_position(self, posX, posY):
+        """
+        Override the set_position method to update both the start and end points of the arrow.
+        """
+        # Update the starting position of the arrow
+        self.posX = posX
+        self.posY = posY
+        self.endX = self.posX 
+        self.endY = self.posY + self.sizeY
+        self.calc_properties()
+        
+    def is_mouse_over(self, mouse_pos):
+        x, y, width, height = self.bounding_box
+        res = False
+        if x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height:
+            print("OVER VERT BAR")
+            res = True
+        return res
+
+    def draw(self, surface):
+        pygame.draw.line(surface, self.color, self.start, self.end, 2)

@@ -30,6 +30,11 @@ def add_test(control):
     arrow1.attach(arrow2)
     arrow2.mark_ref_point_used(Sides.W)
 
+    blockS = block1.get_ref_point(Sides.S)
+    vbar = dr.VertBar(posX=blockS.x, posY=blockS.y, endX=blockS.x, endY=blockS.y+500)
+    control.add_drawable(vbar)
+    block1.attach(vbar)
+
     return arrow2
 
 def add_block(control, parent=None, parentSide=None, blockSide=None):
