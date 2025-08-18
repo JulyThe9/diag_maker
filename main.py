@@ -42,7 +42,22 @@ def main():
     screen, control = init()
 
     arrow2 = fn.add_test(control)
-    fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
+    block = fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
+    vbar = fn.add_vbar(control, block)
+    fn.add_block_to_vbar(control, vbar)
+    fn.add_block_to_vbar(control, vbar)
+
+    block3 = fn.add_block(control)
+    vbar3 = fn.add_vbar(control, block3)
+    fn.add_block_to_vbar(control, vbar3)
+    fn.add_block_to_vbar(control, vbar3)
+    fn.add_block_to_vbar(control, vbar3)
+
+    # TODO: unit test idea
+    # print("legowelt")
+    # rp = block.get_ref_point(Sides.S)
+    # print(rp.x, rp.y)
+    # print(vbar.posX, vbar.posY)
 
     control.apply_styling(Style.colorful_style)
 

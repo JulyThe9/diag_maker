@@ -5,6 +5,7 @@ import pygame
 
 from DrawableProps import DrawableProps, Sides
 from BasicPoint import BasicPoint
+import Globals as g
 
 class ShapeType(Enum):
     BLOCK = "block"
@@ -41,11 +42,6 @@ class Drawable:
         pass
 
     @abstractmethod
-    def get_next_ref_point(self):
-        """Draw the object on the surface."""
-        pass
-
-    @abstractmethod
     def set_pos_from_ref(self, ref_point, side):
         """Calc main pos from ref pos."""
         pass
@@ -64,8 +60,8 @@ class Drawable:
     def get_ref_point(self, side, update=False):
         return self.props.get_ref_point(side, update)
 
-    def mark_ref_point_used(self, side):
-        self.props.mark_ref_point_used(side)
+    def mark_ref_point_used(self, ref_id):
+        self.props.mark_ref_point_used(ref_id)
 
 
 # =================================================== BLOCK ===================================================
@@ -77,10 +73,10 @@ class Block(Drawable):
         self.populate_ref_points()
 
     def populate_ref_points(self):
-        self.props.add_ref_point(Sides.W, BasicPoint(self.posX, self.posY + self.sizeY / 2)) # A
-        self.props.add_ref_point(Sides.N, BasicPoint(self.posX + self.sizeX / 2, self.posY)) # B
-        self.props.add_ref_point(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY + self.sizeY / 2)) # C
-        self.props.add_ref_point(Sides.S, BasicPoint(self.posX + self.sizeX / 2, self.posY + self.sizeY)) # D
+        self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY + self.sizeY / 2)) # A
+        self.props.add_ref_point_sides(Sides.N, BasicPoint(self.posX + self.sizeX / 2, self.posY)) # B
+        self.props.add_ref_point_sides(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY + self.sizeY / 2)) # C
+        self.props.add_ref_point_sides(Sides.S, BasicPoint(self.posX + self.sizeX / 2, self.posY + self.sizeY)) # D
 
     def calc_properties(self):
         # Block doesn't need any special calculations, so this method is empty.
@@ -89,13 +85,13 @@ class Block(Drawable):
     def set_pos_from_ref(self, ref_point, side):
         bp = None
         if side == Sides.W:
-            bp = BasicPoint(self.posX, self.posY - self.sizeY / 2)
+            bp = BasicPoint(ref_point.x, ref_point.y - self.sizeY / 2)
         elif side == Sides.N:
-            bp = BasicPoint(self.posX - self.sizeX / 2, self.posY)
+            bp = BasicPoint(ref_point.x - self.sizeX / 2, ref_point.y)
         elif side == Sides.E:
-            bp = BasicPoint(self.posX - self.sizeX, self.posY - self.sizeY / 2)
+            bp = BasicPoint(ref_point.x - self.sizeX, ref_point.y - self.sizeY / 2)
         elif side == Sides.S:
-            bp = BasicPoint(self.posX - self.sizeX / 2, self.posY - self.sizeY)
+            bp = BasicPoint(ref_point.x - self.sizeX / 2, ref_point.y - self.sizeY)
 
         if bp:
             self.set_position(bp.x, bp.y)
@@ -125,8 +121,8 @@ class Arrow(Drawable):
         
         
     def populate_ref_points(self):
-        self.props.add_ref_point(Sides.W, BasicPoint(self.posX, self.posY))
-        self.props.add_ref_point(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY))
+        self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY))
+        self.props.add_ref_point_sides(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY))
 
     def calc_properties(self):
         # Calculate the properties needed for drawing the arrow
@@ -170,9 +166,6 @@ class Arrow(Drawable):
         # Return the bounding box as (x, y, width, height)
         return (bounding_x, bounding_y, width, height)
 
-    # def get_next_ref_point(self):
-    #     return self.props.next_ref_point
-
     def set_position(self, posX, posY):
         """
         Override the set_position method to update both the start and end points of the arrow.
@@ -202,7 +195,7 @@ class Arrow(Drawable):
 
 
 
-# =================================================== VERTBAR ===================================================
+# =================================================== VBAR ===================================================
 class VertBar(Drawable):
     def __init__(self, posX, posY, endX, endY):
         # Arrow specific initialization
@@ -210,13 +203,16 @@ class VertBar(Drawable):
         self.endX = endX
         self.endY = endY
         self.calc_properties()
-        self.props = DrawableProps()
-        #self.populate_ref_points()
+        self.props = DrawableProps(ref_points_are_list=True)
+        self.populate_ref_points()
         
-        
-    # def populate_ref_points(self):
-    #     self.props.add_ref_point(Sides.W, BasicPoint(self.posX, self.posY))
-    #     self.props.add_ref_point(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY))
+    def populate_ref_points(self):
+        step = g.DEF_BLOCK_SIZE + g.DEF_GAP
+        y = self.posY
+        while y <= self.endY:
+            #self.props.ref_points_list.append(MarkedPoint(self.posX, y))
+            self.props.add_ref_point_list(BasicPoint(self.posX, y))
+            y += step
 
     def calc_properties(self):
         self.start = (self.posX, self.posY)
@@ -231,16 +227,13 @@ class VertBar(Drawable):
         height = math.hypot(self.end[0] - self.posX, self.end[1] - self.posY)
         
         # TODO: pixels?
-        width = 20
+        width = 10
     
         bounding_x = self.posX
         bounding_y = self.posY - height / 2.0
 
         # Return the bounding box as (x, y, width, height)
         return (bounding_x, bounding_y, width, height)
-
-    # def get_next_ref_point(self):
-    #     return self.props.next_ref_point
 
     def set_position(self, posX, posY):
         """
