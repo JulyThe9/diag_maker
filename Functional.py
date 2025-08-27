@@ -11,7 +11,8 @@ def add_test(control):
     posX = connect_p.x
     posY = connect_p.y
 
-    arrow1 = dr.Arrow(posX=posX, posY=posY, endX=posX+100, endY=posY)
+    # arrow1 = dr.Arrow(posX=posX, posY=posY, endX=posX+100, endY=posY)
+    arrow1 = dr.Arrow(posX=posX, posY=posY, endX=posX-100, endY=posY)
 
     print(arrow1.props.ref_points_sides)
 
@@ -82,7 +83,7 @@ def add_vbar(control, parent=None):
 
 def add_block_to_vbar(control, parent):
     if parent == None:
-        return
+        return None
     
     vbar_rp = parent.get_next_ref_point(True)
     
@@ -94,3 +95,26 @@ def add_block_to_vbar(control, parent):
     parent.attach(block)
 
     return block
+
+def bar_to_bar(control, src, dst):
+    if src == None or dst == None:
+        return None
+
+    src_rp = src.get_next_ref_point(True)
+    dst_rp = dst.get_next_ref_point(True)
+
+    while src_rp.y > dst_rp.y:
+        dst_rp = dst.get_next_ref_point(True)
+        if dst_rp == None:
+            break
+
+    if dst_rp == None:
+        return None
+    
+    connect_arrow = dr.Arrow(posX=src_rp.x, posY=src_rp.y, endX=dst_rp.x, endY=dst_rp.y)
+    control.add_drawable(connect_arrow)
+
+    src.attach(connect_arrow)
+
+    connect_arrow.mark_ref_point_used(Sides.W)
+    connect_arrow.mark_ref_point_used(Sides.E)

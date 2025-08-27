@@ -42,6 +42,7 @@ def main():
     screen, control = init()
 
     arrow2 = fn.add_test(control)
+
     block = fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
     vbar = fn.add_vbar(control, block)
     fn.add_block_to_vbar(control, vbar)
@@ -52,6 +53,8 @@ def main():
     fn.add_block_to_vbar(control, vbar3)
     fn.add_block_to_vbar(control, vbar3)
     fn.add_block_to_vbar(control, vbar3)
+
+    fn.bar_to_bar(control, vbar3, vbar)
 
     # TODO: unit test idea
     # print("legowelt")

@@ -147,6 +147,7 @@ class Arrow(Drawable):
         x, y, width, height = self.bounding_box
         print(f"Bounding Box - X: {x}, Y: {y}, Width: {width}, Height: {height}")
     
+    # arrow
     def calc_bounding_box(self):
         # Calculate the width of the bounding box as the distance between start and end points
         width = math.hypot(self.end[0] - self.posX, self.end[1] - self.posY)
@@ -161,6 +162,8 @@ class Arrow(Drawable):
         # Calculate the position of the bounding box
         # Center the bounding box at the start point of the arrow
         bounding_x = self.posX
+        if self.posX > self.endX:
+            bounding_x = self.endX
         bounding_y = self.posY - height / 2.0
 
         # Return the bounding box as (x, y, width, height)
@@ -170,13 +173,21 @@ class Arrow(Drawable):
         """
         Override the set_position method to update both the start and end points of the arrow.
         """
+        left_to_right = False
+        if self.posX < self.endX:
+            left_to_right = True
+
         # Update the starting position of the arrow
         self.posX = posX
         self.posY = posY
         # self.start = (self.posX, self.posY)
         # self.end = (self.posX + self.sizeX, self.posY)
 
-        self.endX = self.posX + self.sizeX
+        if left_to_right:
+            self.endX = self.posX + self.sizeX
+        else:
+            self.endX = self.posX - self.sizeX
+
         self.endY = self.posY
         self.calc_properties()
         
@@ -184,6 +195,7 @@ class Arrow(Drawable):
     def is_mouse_over(self, mouse_pos):
         x, y, width, height = self.bounding_box
         res = False
+
         if x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height:
             print("OVER ARROW")
             res = True
