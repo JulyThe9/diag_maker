@@ -27,6 +27,16 @@ class DrawableProps:
         self.ref_points_sides = ref_points_sides if ref_points_sides is not None else {}
         self.ref_points_list = ref_points_list if ref_points_list is not None else []
 
+        self.text_label_pos = BasicPoint
+        self.has_text = False
+
+    def set_text_label_pos(self, x, y):
+        self.text_label_pos.x = x
+        self.text_label_pos.y = y
+
+    def get_text_label_pos(self):
+        return self.text_label_pos
+
     def add_ref_point_sides(self, side_key: Sides, point: BasicPoint):
         self.ref_points_sides[side_key] = MarkedPoint(point, False)
     

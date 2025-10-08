@@ -31,6 +31,17 @@ class Drawable:
     def set_color(self, color):
         self.color = color
 
+    def add_text(self, text_str):
+        font = pygame.font.Font(None, 24)
+        self.label = font.render(text_str, True, (0, 0, 0))
+        self.text_rect = self.label.get_rect(topleft=(self.props.get_text_label_pos().x, \
+            self.props.get_text_label_pos().y))
+        self.props.has_text = True
+
+    def draw_text(self, surface):
+        if self.props.has_text:
+            surface.blit(self.label, self.text_rect)
+
     @abstractmethod
     def calc_properties(self):
         """Calculate necessary properties for drawing."""
@@ -71,12 +82,19 @@ class Block(Drawable):
         super().__init__(ShapeType.BLOCK, posX, posY, sizeX, sizeY)
         self.props = DrawableProps()
         self.populate_ref_points()
+        self.calculate_text_label_pos()
 
     def populate_ref_points(self):
         self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY + self.sizeY / 2)) # A
         self.props.add_ref_point_sides(Sides.N, BasicPoint(self.posX + self.sizeX / 2, self.posY)) # B
         self.props.add_ref_point_sides(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY + self.sizeY / 2)) # C
         self.props.add_ref_point_sides(Sides.S, BasicPoint(self.posX + self.sizeX / 2, self.posY + self.sizeY)) # D
+
+    def calculate_text_label_pos(self):
+        rp_east = self.props.get_ref_point(Sides.E)
+        x = self.posX + self.sizeX * g.DEF_BLOCK_TEXT_X_MARG_FACT
+        y = rp_east.y
+        self.props.set_text_label_pos(x,y)
 
     def calc_properties(self):
         # Block doesn't need any special calculations, so this method is empty.
@@ -107,6 +125,7 @@ class Block(Drawable):
     def draw(self, surface):
         # Draw a simple rectangle for Block
         pygame.draw.rect(surface, self.color, (self.posX, self.posY, self.sizeX, self.sizeY))
+        self.draw_text(surface)
 
 # =================================================== ARROW ===================================================
 class Arrow(Drawable):

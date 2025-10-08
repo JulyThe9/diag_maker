@@ -48,15 +48,17 @@ def main():
     # block = fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
 
     block = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    vbar = fn.add_vbar(control, block)
-    fn.add_block_to_vbar(control, vbar)
-    fn.add_block_to_vbar(control, vbar)
+    block.add_text("Hello ")
+
+    # vbar = fn.add_vbar(control, block)
+    # fn.add_block_to_vbar(control, vbar)
+    # fn.add_block_to_vbar(control, vbar)
 
     block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    vbar3 = fn.add_vbar(control, block3)
-    fn.add_block_to_vbar(control, vbar3)
-    fn.add_block_to_vbar(control, vbar3)
-    fn.add_block_to_vbar(control, vbar3)
+    # vbar3 = fn.add_vbar(control, block3)
+    # fn.add_block_to_vbar(control, vbar3)
+    # fn.add_block_to_vbar(control, vbar3)
+    # fn.add_block_to_vbar(control, vbar3)
 
     # fn.bar_to_bar(control, vbar3, vbar)
     block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
