@@ -4,7 +4,7 @@ from DrawableProps import Sides
 import Style
 
 def add_test(control):
-    block1 = dr.Block(posX=g.global_props.get_next_pos().x, posY=g.global_props.get_next_pos().y, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
+    block1 = dr.Block(posX=g.global_props.get_next_pos().x, posY=g.global_props.get_next_pos(True).y, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
     control.add_drawable(block1)  
 
     connect_p = block1.get_ref_point(Sides.E, update=True)
@@ -38,7 +38,10 @@ def add_test(control):
 
     return arrow2
 
-def add_block(control, parent=None, parentSide=None, blockSide=None):
+def add_rect(control, rectWidth, parent=None, parentSide=None, blockSide=None):
+    return add_block(control, parent, parentSide, blockSide, rectWidth)
+
+def add_block(control, parent=None, parentSide=None, blockSide=None, blockWidth = g.DEF_BLOCK_SIZE):
     if not parent == None:
         
         if parentSide:
@@ -47,7 +50,7 @@ def add_block(control, parent=None, parentSide=None, blockSide=None):
         else:
             p = parent.get_next_ref_point()
 
-        block = dr.Block(posX=0, posY=0, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
+        block = dr.Block(posX=0, posY=0, sizeX=blockWidth, sizeY=g.DEF_BLOCK_SIZE)
 
         # if we specify block side, it means 
         # parent ref point CONNECTS to block on that side, so pos recalc
@@ -60,7 +63,9 @@ def add_block(control, parent=None, parentSide=None, blockSide=None):
         #     posY=parent.get_ref_point(Sides.E).y, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
         parent.attach(block)
     else:
-        block = dr.Block(posX=g.global_props.get_next_pos().x, posY=g.global_props.get_next_pos().y, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
+        block = dr.Block(posX=g.global_props.get_next_pos().x, posY=g.global_props.get_next_pos(True).y, \
+            sizeX=blockWidth, sizeY=g.DEF_BLOCK_SIZE)
+
     control.add_drawable(block)
     
     return block
@@ -81,13 +86,13 @@ def add_vbar(control, parent=None):
 
     return vbar
 
-def add_block_to_vbar(control, parent):
+def add_block_to_vbar(control, parent, block_width = g.DEF_BLOCK_SIZE):
     if parent == None:
         return None
     
     vbar_rp = parent.get_next_ref_point(True)
     
-    block = dr.Block(posX=0, posY=0, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
+    block = dr.Block(posX=0, posY=0, sizeX=block_width, sizeY=g.DEF_BLOCK_SIZE)
     block.set_pos_from_ref(vbar_rp, Sides.S)
     block.populate_ref_points()
 

@@ -28,9 +28,11 @@ def init():
 
     # Track current window size
     current_width, current_height = initial_width, initial_height
+    current_width = current_width * g.DEF_WIDTH_FACTOR
 
-    g.global_props = glprops.GlobalProps(current_width, current_height)
-    glprops.first_pos(g.global_props)
+    print (current_width)
+    g.global_props = glprops.GlobalProps(current_height, current_width)
+    g.global_props.fill_in_base_positions(g.DEF_NUM_COMPONENTS)
 
     control = ctrl.Control()
 
@@ -41,20 +43,24 @@ def init():
 def main():
     screen, control = init()
 
-    arrow2 = fn.add_test(control)
+    # arrow2 = fn.add_test(control)
 
-    block = fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
+    # block = fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
+
+    block = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
     vbar = fn.add_vbar(control, block)
     fn.add_block_to_vbar(control, vbar)
     fn.add_block_to_vbar(control, vbar)
 
-    block3 = fn.add_block(control)
+    block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
     vbar3 = fn.add_vbar(control, block3)
     fn.add_block_to_vbar(control, vbar3)
     fn.add_block_to_vbar(control, vbar3)
     fn.add_block_to_vbar(control, vbar3)
 
-    fn.bar_to_bar(control, vbar3, vbar)
+    # fn.bar_to_bar(control, vbar3, vbar)
+    block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+    block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
 
     # TODO: unit test idea
     # print("legowelt")
