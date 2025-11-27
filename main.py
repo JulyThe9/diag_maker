@@ -51,8 +51,15 @@ def main():
     text1 = block.add_text("Hello")
 
     vbar = fn.add_vbar(control, block)
-    block2 = fn.add_block_to_vbar(control, vbar)
-    block2.add_text("Goodbye")
+    # block2 = fn.add_block_to_vbar(control, vbar)
+    # block2.add_text("Goodbye")
+    
+    block2 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+    vbar2 = fn.add_vbar(control, block2)
+
+    fn.bar_to_bar(control, vbar, vbar2, "to right")
+    fn.bar_to_bar(control, vbar2, vbar, "to left")
+    fn.bar_to_bar(control, vbar, vbar2, "again to right")
 
     # vbar = fn.add_vbar(control, block)
     # fn.add_block_to_vbar(control, vbar)

@@ -32,6 +32,7 @@ class Drawable:
         self.color = color
 
     def add_text(self, text_str):
+        print("kgjkdfhgkjdfhjgkfd")
         font = pygame.font.Font(None, 24)
         self.label = font.render(text_str, True, (0, 0, 0))
         self.text_rect = self.label.get_rect(topleft=(self.props.get_text_label_pos().x, \
@@ -63,15 +64,17 @@ class Drawable:
     def is_mouse_over(self, mouse_pos):
         # Default implementation for the base class (return False or check for a block)
         return False
-
-    def set_position(self, x, y):
-        self.posX = x
-        self.posY = y
-
+    
+    def set_props_text_label_pos(self):
         if self.props.has_text:
             self.props.set_text_label_pos(self.posX + self.props.diff_to_text_x, \
                 self.posY + self.props.diff_to_text_y)
             self.text_rect.topleft = (self.props.get_text_label_pos().x, self.props.get_text_label_pos().y) 
+
+    def set_position(self, x, y):
+        self.posX = x
+        self.posY = y
+        self.set_props_text_label_pos()
         
     def get_next_ref_point(self, update=False):
         return self.props.get_next_ref_point(update)
@@ -147,11 +150,30 @@ class Arrow(Drawable):
         self.calc_properties()
         self.props = DrawableProps()
         self.populate_ref_points()
-        
+        self.calculate_text_label_pos()
         
     def populate_ref_points(self):
         self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY))
         self.props.add_ref_point_sides(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY))
+
+    def left_to_right(self):
+        return self.posX < self.endX
+
+    def calculate_text_label_pos(self):
+        print ('arrow calculcate')
+        rp_east = self.props.get_ref_point(Sides.E)
+
+        # one third from left to right
+        offset = self.sizeX / 3
+        if not self.left_to_right():
+            # two thirds from right to left
+            offset = -offset * 2
+        x = self.posX + offset
+
+        _, bounding_box_y, _, height = self.bounding_box
+        y = bounding_box_y - height * g.DEF_BLOCK_TEXT_Y_MARG_FACT
+
+        self.props.set_text_label_pos(x,y)
 
     def calc_properties(self):
         # Calculate the properties needed for drawing the arrow
@@ -202,9 +224,6 @@ class Arrow(Drawable):
         """
         Override the set_position method to update both the start and end points of the arrow.
         """
-        left_to_right = False
-        if self.posX < self.endX:
-            left_to_right = True
 
         # Update the starting position of the arrow
         self.posX = posX
@@ -212,7 +231,7 @@ class Arrow(Drawable):
         # self.start = (self.posX, self.posY)
         # self.end = (self.posX + self.sizeX, self.posY)
 
-        if left_to_right:
+        if self.left_to_right():
             self.endX = self.posX + self.sizeX
         else:
             self.endX = self.posX - self.sizeX
@@ -220,7 +239,9 @@ class Arrow(Drawable):
         self.endY = self.posY
         self.calc_properties()
         
-        
+        self.set_props_text_label_pos()
+
+
     def is_mouse_over(self, mouse_pos):
         x, y, width, height = self.bounding_box
         res = False
@@ -233,6 +254,7 @@ class Arrow(Drawable):
     def draw(self, surface):
         pygame.draw.line(surface, self.color, self.start, self.end, 2)
         pygame.draw.polygon(surface, self.color, [self.end, self.left, self.right])
+        self.draw_text(surface)
 
 
 
@@ -278,7 +300,7 @@ class VertBar(Drawable):
 
     def set_position(self, posX, posY):
         """
-        Override the set_position method to update both the start and end points of the arrow.
+        Override the set_position method to update both the start and end points of the vertical bar.
         """
         # Update the starting position of the arrow
         self.posX = posX
