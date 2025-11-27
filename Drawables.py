@@ -32,8 +32,7 @@ class Drawable:
         self.color = color
 
     def add_text(self, text_str):
-        print("kgjkdfhgkjdfhjgkfd")
-        font = pygame.font.Font(None, 24)
+        font = pygame.font.Font('./Roboto-VariableFont_wdth,wght.ttf', 18)
         self.label = font.render(text_str, True, (0, 0, 0))
         self.text_rect = self.label.get_rect(topleft=(self.props.get_text_label_pos().x, \
             self.props.get_text_label_pos().y))
