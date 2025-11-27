@@ -29,6 +29,8 @@ class DrawableProps:
 
         self.text_label_pos = BasicPoint
         self.has_text = False
+        self.diff_to_text_x = 0
+        self.diff_to_text_y = 0
 
     def set_text_label_pos(self, x, y):
         self.text_label_pos.x = x

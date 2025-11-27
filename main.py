@@ -48,21 +48,25 @@ def main():
     # block = fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
 
     block = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    block.add_text("Hello ")
+    text1 = block.add_text("Hello")
+
+    vbar = fn.add_vbar(control, block)
+    block2 = fn.add_block_to_vbar(control, vbar)
+    block2.add_text("Goodbye")
 
     # vbar = fn.add_vbar(control, block)
     # fn.add_block_to_vbar(control, vbar)
     # fn.add_block_to_vbar(control, vbar)
 
-    block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+    ### block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
     # vbar3 = fn.add_vbar(control, block3)
     # fn.add_block_to_vbar(control, vbar3)
     # fn.add_block_to_vbar(control, vbar3)
     # fn.add_block_to_vbar(control, vbar3)
 
     # fn.bar_to_bar(control, vbar3, vbar)
-    block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+    ### block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+    #block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
 
     # TODO: unit test idea
     # print("legowelt")

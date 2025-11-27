@@ -38,6 +38,9 @@ class Drawable:
             self.props.get_text_label_pos().y))
         self.props.has_text = True
 
+        self.props.diff_to_text_x = self.props.get_text_label_pos().x - self.posX
+        self.props.diff_to_text_y = self.props.get_text_label_pos().y - self.posY
+
     def draw_text(self, surface):
         if self.props.has_text:
             surface.blit(self.label, self.text_rect)
@@ -64,6 +67,11 @@ class Drawable:
     def set_position(self, x, y):
         self.posX = x
         self.posY = y
+
+        if self.props.has_text:
+            self.props.set_text_label_pos(self.posX + self.props.diff_to_text_x, \
+                self.posY + self.props.diff_to_text_y)
+            self.text_rect.topleft = (self.props.get_text_label_pos().x, self.props.get_text_label_pos().y) 
         
     def get_next_ref_point(self, update=False):
         return self.props.get_next_ref_point(update)
@@ -94,6 +102,8 @@ class Block(Drawable):
         rp_east = self.props.get_ref_point(Sides.E)
         x = self.posX + self.sizeX * g.DEF_BLOCK_TEXT_X_MARG_FACT
         y = rp_east.y
+        # legowelt
+        # print("{0} : {1}".format(self.posX,self.sizeX))
         self.props.set_text_label_pos(x,y)
 
     def calc_properties(self):

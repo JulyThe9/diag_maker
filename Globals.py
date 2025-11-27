@@ -1,6 +1,7 @@
 global_props = None
 
 DEF_BLOCK_SIZE = 50
+DEF_BLOCK_WIDTH = 100
 DEF_GAP = 40
 DEF_VBAR_SIZE = 400
 

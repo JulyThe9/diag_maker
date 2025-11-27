@@ -33,7 +33,7 @@ class Control:
                 delta_x = new_posX - self.dragging_object.posX
                 delta_y = new_posY - self.dragging_object.posY
 
-                self.dragging_object.set_position(new_posX, new_posY)
+                self.dragging_object.set_position(new_posX, new_posY)         
 
                 # children
                 for child in self.dragging_object.attachedDrawables:
