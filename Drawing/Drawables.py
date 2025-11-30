@@ -41,9 +41,12 @@ class Drawable:
         self.props.diff_to_text_x = self.props.get_text_label_pos().x - self.posX
         self.props.diff_to_text_y = self.props.get_text_label_pos().y - self.posY
 
-    def draw_text(self, surface):
+    def draw_text(self, surface, uxctrol):
         if self.props.has_text:
-            surface.blit(self.label, self.text_rect)
+            text_rect = self.label.get_rect(topleft=(self.text_rect.x, \
+                uxctrol.apply_scroll_offset_y(self.text_rect.y)))
+
+            surface.blit(self.label, text_rect)
 
     @abstractmethod
     def calc_properties(self):
@@ -51,7 +54,7 @@ class Drawable:
         pass
 
     @abstractmethod
-    def draw(self, surface):
+    def draw(self, surface, uxctrol):
         """Draw the object on the surface."""
         pass
 
@@ -139,10 +142,13 @@ class Block(Drawable):
             res = True
         return res
 
-    def draw(self, surface):
+    def draw(self, surface, uxctrol):
         # Draw a simple rectangle for Block
-        pygame.draw.rect(surface, self.color, (self.posX, self.posY, self.sizeX, self.sizeY))
-        self.draw_text(surface)
+
+        pygame.draw.rect(surface, self.color, (self.posX, uxctrol.apply_scroll_offset_y(self.posY), \
+            self.sizeX, self.sizeY))
+
+        self.draw_text(surface, uxctrol)
 
 # =================================================== ARROW ===================================================
 class Arrow(Drawable):
@@ -255,10 +261,16 @@ class Arrow(Drawable):
             res = True
         return res
 
-    def draw(self, surface):
-        pygame.draw.line(surface, self.color, self.start, self.end, 2)
-        pygame.draw.polygon(surface, self.color, [self.end, self.left, self.right])
-        self.draw_text(surface)
+    def draw(self, surface, uxctrol):
+        apply_scroll = lambda t: (t[0], uxctrol.apply_scroll_offset_y(t[1]))
+    
+        pygame.draw.line(surface, self.color, apply_scroll(self.start), \
+            apply_scroll(self.end), 2)
+
+        pygame.draw.polygon(surface, self.color, [apply_scroll(self.end), \
+            apply_scroll(self.left), apply_scroll(self.right)])
+
+        self.draw_text(surface, uxctrol)
 
 
 
@@ -321,5 +333,8 @@ class VertBar(Drawable):
             res = True
         return res
 
-    def draw(self, surface):
-        pygame.draw.line(surface, self.color, self.start, self.end, 2)
+    def draw(self, surface, uxctrol):
+        start = (self.posX, uxctrol.apply_scroll_offset_y(self.posY))
+        end = (self.endX, uxctrol.apply_scroll_offset_y(self.endY))
+
+        pygame.draw.line(surface, self.color, start, end, 2)

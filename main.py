@@ -16,6 +16,9 @@ from Drawing.DrawableProps import Sides
 import Parser.ParserCtrl as pctrl
 import Parser.GlobalState as pgs
 
+# UXCtrl
+import UX.UXCtrl as uxc
+
 
  # Colors
 MISC_WHITE = (255, 255, 255)
@@ -51,6 +54,7 @@ def init():
 def main():
     screen, control = init()
     pstate = pgs.GlobalState()
+    uxctrol = uxc.UXCtrl()
 
     if len(sys.argv) >= 2:
         filename = sys.argv[1]
@@ -78,6 +82,9 @@ def main():
             elif event.type == pygame.VIDEORESIZE:
                 current_width, current_height = event.w, event.h
                 # Only update internal size variables, don't recreate the window!
+            elif event.type == pygame.MOUSEWHEEL:
+                uxctrol.scroll_offset_y -= event.y * g.DEF_SCROLL_SPEED_FACT
+                print(event.x, uxctrol.scroll_offset_y)
             
             control.handle_events(event)
 
@@ -89,7 +96,7 @@ def main():
         pygame.draw.line(screen, MISC_LINE_COLOR, (center_x, 0), (center_x, current_height), 2)
 
         # Draw all the drawable objects in the control
-        control.draw(screen)
+        control.draw(screen, uxctrol)
 
         # Update display
         pygame.display.flip()

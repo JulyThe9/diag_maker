@@ -48,10 +48,10 @@ class Control:
             if self.dragging_object:
                 self.dragging_object = None
 
-    def draw(self, surface):
+    def draw(self, surface, uxctrol):
         # Draw all the drawable objects
         for drawable in self.drawables:
-            drawable.draw(surface)
+            drawable.draw(surface, uxctrol)
 
     def apply_styling(self, style: Style):
         for drawable in self.drawables:
