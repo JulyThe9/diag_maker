@@ -1,13 +1,21 @@
 import pygame
 import sys
 
-import Drawables as dr
-import Control as ctrl
-import Style
-import GlobalProps as glprops
-import Functional as fn
+# Drawing
+import Drawing.Drawables as dr
+import Drawing.Control as ctrl
+
+from Drawing.Style import colorful_style
+
+import Drawing.GlobalProps as glprops
+import Drawing.Functional as fn
 import Globals as g
-from DrawableProps import Sides
+from Drawing.DrawableProps import Sides
+
+# Parser
+import Parser.ParserCtrl as pctrl
+import Parser.GlobalState as pgs
+
 
  # Colors
 MISC_WHITE = (255, 255, 255)
@@ -37,43 +45,20 @@ def init():
     control = ctrl.Control()
 
     return screen, control
-
+    
 
 
 def main():
     screen, control = init()
+    pstate = pgs.GlobalState()
 
-    # arrow2 = fn.add_test(control)
-
-    # block = fn.add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
-
-    block = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    text1 = block.add_text("Hello")
-
-    vbar = fn.add_vbar(control, block)
-    # block2 = fn.add_block_to_vbar(control, vbar)
-    # block2.add_text("Goodbye")
-    
-    block2 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    vbar2 = fn.add_vbar(control, block2)
-
-    fn.bar_to_bar(control, vbar, vbar2, "to right")
-    fn.bar_to_bar(control, vbar2, vbar, "to left")
-    fn.bar_to_bar(control, vbar, vbar2, "again to right")
-
-    # vbar = fn.add_vbar(control, block)
-    # fn.add_block_to_vbar(control, vbar)
-    # fn.add_block_to_vbar(control, vbar)
-
-    ### block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    # vbar3 = fn.add_vbar(control, block3)
-    # fn.add_block_to_vbar(control, vbar3)
-    # fn.add_block_to_vbar(control, vbar3)
-    # fn.add_block_to_vbar(control, vbar3)
-
-    # fn.bar_to_bar(control, vbar3, vbar)
-    ### block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    #block3 = fn.add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+    if len(sys.argv) >= 2:
+        filename = sys.argv[1]
+        for send, recv, msg in pctrl.parse_messages(filename):
+            # print("Sender:", sender)
+            # print("Receiver:", receiver)
+            # print("Message:", msg)
+            control.build_comm_fragment(pstate, send, recv, msg)
 
     # TODO: unit test idea
     # print("legowelt")
@@ -81,7 +66,7 @@ def main():
     # print(rp.x, rp.y)
     # print(vbar.posX, vbar.posY)
 
-    control.apply_styling(Style.colorful_style)
+    control.apply_styling(colorful_style)
 
     # Main loop
     running = True

@@ -1,3 +1,11 @@
 *
 !*.py
 !.gitignore
+
+!/Drawing/
+/Drawing/*
+!/Drawing/*.py
+
+!/Parser/
+/Pareser/*
+!/Parser/*.py

@@ -1,4 +1,4 @@
-import BasicPoint
+from . import BasicPoint
 from enum import Enum
 from dataclasses import dataclass
 from pprint import pprint

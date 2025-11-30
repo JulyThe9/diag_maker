@@ -3,8 +3,8 @@ from enum import Enum
 import math
 import pygame
 
-from DrawableProps import DrawableProps, Sides
-from BasicPoint import BasicPoint
+from .DrawableProps import DrawableProps, Sides
+from .BasicPoint import BasicPoint
 import Globals as g
 
 class ShapeType(Enum):
@@ -32,7 +32,7 @@ class Drawable:
         self.color = color
 
     def add_text(self, text_str):
-        font = pygame.font.Font('./Roboto-VariableFont_wdth,wght.ttf', 18)
+        font = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
         self.label = font.render(text_str, True, (0, 0, 0))
         self.text_rect = self.label.get_rect(topleft=(self.props.get_text_label_pos().x, \
             self.props.get_text_label_pos().y))
@@ -113,6 +113,11 @@ class Block(Drawable):
         pass
 
     def set_pos_from_ref(self, ref_point, side):
+
+        if ref_point == None:
+            print ("Block::set_pos_from_ref: " + "ref_point is None")
+            return
+
         bp = None
         if side == Sides.W:
             bp = BasicPoint(ref_point.x, ref_point.y - self.sizeY / 2)

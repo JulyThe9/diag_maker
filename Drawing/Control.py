@@ -1,5 +1,8 @@
 import pygame
-import Style
+
+from . import Style
+from . import Functional as fn
+import Globals as g
 
 class Control:
     def __init__(self):
@@ -54,6 +57,45 @@ class Control:
         for drawable in self.drawables:
             color = style.get_color(drawable.shape_type)
             drawable.set_color(color)
+
+    # def get_drawable(self, idx):
+    #     if idx >= len(self.drawables):
+    #         return None
+
+    #     return self.drawables[idx]
+
+    
+    def build_comm_fragment(self, pstate, send, recv, msg):
+        send_bar = recv_bar = None
+
+        # print ("processing {0}".format(send))
+        # print (pstate.comm_entities)
+        
+        if send in pstate.comm_entities:
+            send_bar = pstate.comm_entities[send]
+        else:
+            block = fn.add_rect(self, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+            
+            if block:
+                block.add_text(send)
+
+            send_bar = fn.add_vbar(self, block)
+            pstate.comm_entities[send] = send_bar
+        
+        if recv in pstate.comm_entities:
+            recv_bar = pstate.comm_entities[recv]
+        else:
+            block = fn.add_rect(self, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+            
+            if block:
+                block.add_text(recv)
+
+            recv_bar = fn.add_vbar(self, block)
+            pstate.comm_entities[recv] = recv_bar
+        
+        fn.bar_to_bar(self, send_bar, recv_bar, msg)
+        
+
 
 
 # free functions

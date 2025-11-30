@@ -1,4 +1,4 @@
-from Drawables import ShapeType
+from .Drawables import ShapeType
 
 class Style:
     def __init__(self, shape_color_map):

@@ -1,7 +1,7 @@
-import Drawables as dr
+from . import Drawables as dr
 import Globals as g
-from DrawableProps import Sides
-import Style
+from .DrawableProps import Sides
+from . import Style
 
 def add_test(control):
     block1 = dr.Block(posX=g.global_props.get_next_pos().x, posY=g.global_props.get_next_pos(True).y, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
@@ -38,6 +38,25 @@ def add_test(control):
 
     return arrow2
 
+def add_test2(control):
+    # arrow2 = add_test(control)
+
+    # block = add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
+
+    block = add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+    text1 = block.add_text("Hello")
+
+    vbar = add_vbar(control, block)
+    # block2 = add_block_to_vbar(control, vbar)
+    # block2.add_text("Goodbye")
+    
+    block2 = add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+    vbar2 = add_vbar(control, block2)
+
+    bar_to_bar(control, vbar, vbar2, "to right")
+    bar_to_bar(control, vbar2, vbar, "to left")
+    bar_to_bar(control, vbar, vbar2, "again to right")
+
 def add_rect(control, rectWidth, parent=None, parentSide=None, blockSide=None):
     return add_block(control, parent, parentSide, blockSide, rectWidth)
 
@@ -65,7 +84,12 @@ def add_block(control, parent=None, parentSide=None, blockSide=None, blockWidth 
         #     posY=parent.get_ref_point(Sides.E).y, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
         parent.attach(block)
     else:
-        block = dr.Block(posX=g.global_props.get_next_pos().x, posY=g.global_props.get_next_pos(True).y, \
+        next_global_pos = g.global_props.get_next_pos(True)
+        if next_global_pos == None:
+            print ("Functional::add_block: " + "global get_next_pos() returns None!")
+            return None
+
+        block = dr.Block(posX=next_global_pos.x, posY=next_global_pos.y, \
             sizeX=blockWidth, sizeY=g.DEF_BLOCK_SIZE)
 
     control.add_drawable(block)

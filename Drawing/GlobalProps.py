@@ -1,4 +1,4 @@
-import BasicPoint as bp
+from . import BasicPoint as bp
 
 class GlobalProps:
     def __init__(self, win_height, win_width, num_components=2, next_position=None):
