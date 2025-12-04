@@ -135,10 +135,18 @@ def bar_to_bar(control, src, dst, label = None):
     src_rp = src.get_next_ref_point(True)
     dst_rp = dst.get_next_ref_point(True)
 
+    aligned = False
     while src_rp.y > dst_rp.y:
         dst_rp = dst.get_next_ref_point(True)
         if dst_rp == None:
+            aligned = True
             break
+
+    if not aligned:
+        while src_rp.y < dst_rp.y:
+            src_rp = src.get_next_ref_point(True)
+            if src_rp == None:
+                break
 
     if dst_rp == None:
         return None
