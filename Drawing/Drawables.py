@@ -34,9 +34,12 @@ class Drawable:
     def add_text(self, text_str):
         font = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
         self.label = font.render(text_str, True, (0, 0, 0))
+
+        self.props.has_text = True
+        self.calculate_text_label_pos()
+
         self.text_rect = self.label.get_rect(topleft=(self.props.get_text_label_pos().x, \
             self.props.get_text_label_pos().y))
-        self.props.has_text = True
 
         self.props.diff_to_text_x = self.props.get_text_label_pos().x - self.posX
         self.props.diff_to_text_y = self.props.get_text_label_pos().y - self.posY
@@ -95,7 +98,6 @@ class Block(Drawable):
         super().__init__(ShapeType.BLOCK, posX, posY, sizeX, sizeY)
         self.props = DrawableProps()
         self.populate_ref_points()
-        self.calculate_text_label_pos()
 
     def populate_ref_points(self):
         self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY + self.sizeY / 2)) # A
@@ -105,7 +107,15 @@ class Block(Drawable):
 
     def calculate_text_label_pos(self):
         rp_east = self.props.get_ref_point(Sides.E)
-        x = self.posX + self.sizeX * g.DEF_BLOCK_TEXT_X_MARG_FACT
+        #x = self.posX + self.sizeX * g.DEF_BLOCK_TEXT_X_MARG_FACT
+
+        offset = 0
+        if self.props.has_text:
+            if self.label.get_width() <= self.sizeX:
+                offset = abs(self.sizeX - self.label.get_width()) / 2
+
+        x = self.posX + offset
+
         y = rp_east.y
         # legowelt
         # print("{0} : {1}".format(self.posX,self.sizeX))
@@ -160,7 +170,6 @@ class Arrow(Drawable):
         self.calc_properties()
         self.props = DrawableProps()
         self.populate_ref_points()
-        self.calculate_text_label_pos()
         
     def populate_ref_points(self):
         self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY))
@@ -173,12 +182,23 @@ class Arrow(Drawable):
         print ('arrow calculcate')
         rp_east = self.props.get_ref_point(Sides.E)
 
-        # one third from left to right
-        offset = self.sizeX / 3
-        if not self.left_to_right():
-            # two thirds from right to left
-            offset = -offset * 2
-        x = self.posX + offset
+        offset = 0
+        x = 0
+        if self.props.has_text:
+            if self.label.get_width() <= self.sizeX:
+                offset = abs(self.sizeX - self.label.get_width()) / 2
+                if not self.left_to_right():
+                    # two thirds from right to left
+                    offset = -(offset + self.label.get_width())
+                x = self.posX + offset
+            # too big to fit case,
+            # ltr text starts at line start
+            # rtl text starts at line end
+            else:
+                if self.left_to_right():
+                    x = self.posX + offset
+                else:
+                    x = self.endX + offset
 
         _, bounding_box_y, _, height = self.bounding_box
         y = bounding_box_y - height * g.DEF_BLOCK_TEXT_Y_MARG_FACT

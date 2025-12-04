@@ -77,8 +77,6 @@ def add_block(control, parent=None, parentSide=None, blockSide=None, blockWidth 
             block.set_pos_from_ref(p, blockSide)
             # recalculating reference points
             block.populate_ref_points()
-            # text label pos recalc
-            block.calculate_text_label_pos()
 
         # block = dr.Block(posX=parent.get_ref_point(Sides.E).x, 
         #     posY=parent.get_ref_point(Sides.E).y, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
@@ -121,7 +119,6 @@ def add_block_to_vbar(control, parent, block_width = g.DEF_BLOCK_WIDTH):
     block = dr.Block(posX=0, posY=0, sizeX=block_width, sizeY=g.DEF_BLOCK_SIZE)
     block.set_pos_from_ref(vbar_rp, Sides.S)
     block.populate_ref_points()
-    block.calculate_text_label_pos()
 
     control.add_drawable(block)
     parent.attach(block)
