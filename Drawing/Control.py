@@ -20,7 +20,7 @@ class Control:
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Check if the mouse is over any drawable object
             for drawable in self.drawables:
-                if drawable.is_mouse_over(event.pos):
+                if drawable.is_mouse_over(event.pos, uxctrol):
                     self.dragging_object = drawable
                     self.mouse_offset = (event.pos[0] - drawable.posX, event.pos[1] - drawable.posY)
                     break
@@ -69,7 +69,7 @@ class Control:
                 return
 
             for drawable in self.drawables:
-                drawable.is_mouse_over(event.pos)
+                drawable.is_mouse_over(event.pos, uxctrol)
 
             self.last_free_mouse_pos = (event.pos[0], event.pos[1])
 

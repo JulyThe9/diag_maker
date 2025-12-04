@@ -66,7 +66,7 @@ class Drawable:
         """Calc main pos from ref pos."""
         pass
 
-    def is_mouse_over(self, mouse_pos):
+    def is_mouse_over(self, mouse_pos, uxctrol):
         # Default implementation for the base class (return False or check for a block)
         return False
     
@@ -145,11 +145,17 @@ class Block(Drawable):
             self.set_position(bp.x, bp.y)
             
 
-    def is_mouse_over(self, mouse_pos):
+    def is_mouse_over(self, mouse_pos, uxctrol):
         res = False
-        if self.posX <= mouse_pos[0] <= self.posX + self.sizeX and self.posY <= mouse_pos[1] <= self.posY + self.sizeY:
+        ux_pos_x = uxctrol.apply_offset_x(self.posX)
+        ux_pos_y = uxctrol.apply_offset_y(self.posY)
+
+        if ux_pos_x <= mouse_pos[0] <= ux_pos_x + self.sizeX and \
+            ux_pos_y <= mouse_pos[1] <= ux_pos_y + self.sizeY:
+
             print("OVER BLOCK")
             res = True
+
         return res
 
     def draw(self, surface, uxctrol):
@@ -272,8 +278,11 @@ class Arrow(Drawable):
         self.set_props_text_label_pos()
 
 
-    def is_mouse_over(self, mouse_pos):
+    def is_mouse_over(self, mouse_pos, uxctrol):
         x, y, width, height = self.bounding_box
+        x = uxctrol.apply_offset_x(x)
+        y = uxctrol.apply_offset_y(y)
+
         res = False
 
         if x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height:
@@ -346,8 +355,11 @@ class VertBar(Drawable):
         self.endY = self.posY + self.sizeY
         self.calc_properties()
         
-    def is_mouse_over(self, mouse_pos):
+    def is_mouse_over(self, mouse_pos, uxctrol):
         x, y, width, height = self.bounding_box
+        x = uxctrol.apply_offset_x(x)
+        y = uxctrol.apply_offset_y(y)
+        
         res = False
         if x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height:
             print("OVER VERT BAR")
