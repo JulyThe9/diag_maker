@@ -84,9 +84,9 @@ def main():
                 # Only update internal size variables, don't recreate the window!
             elif event.type == pygame.MOUSEWHEEL:
                 uxctrol.scroll_offset_y -= event.y * g.DEF_SCROLL_SPEED_FACT
-                print(event.x, uxctrol.scroll_offset_y)
+                # print(event.x, uxctrol.scroll_offset_y)
             
-            control.handle_events(event)
+            control.handle_events(event, uxctrol)
 
         # Fill screen white
         screen.fill(MISC_WHITE)

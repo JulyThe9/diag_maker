@@ -46,8 +46,8 @@ class Drawable:
 
     def draw_text(self, surface, uxctrol):
         if self.props.has_text:
-            text_rect = self.label.get_rect(topleft=(self.text_rect.x, \
-                uxctrol.apply_scroll_offset_y(self.text_rect.y)))
+            text_rect = self.label.get_rect(topleft=(uxctrol.apply_offset_x(self.text_rect.x), \
+                uxctrol.apply_offset_y(self.text_rect.y)))
 
             surface.blit(self.label, text_rect)
 
@@ -155,8 +155,8 @@ class Block(Drawable):
     def draw(self, surface, uxctrol):
         # Draw a simple rectangle for Block
 
-        pygame.draw.rect(surface, self.color, (self.posX, uxctrol.apply_scroll_offset_y(self.posY), \
-            self.sizeX, self.sizeY))
+        pygame.draw.rect(surface, self.color, (uxctrol.apply_offset_x(self.posX), \
+            uxctrol.apply_offset_y(self.posY), self.sizeX, self.sizeY))
 
         self.draw_text(surface, uxctrol)
 
@@ -282,7 +282,8 @@ class Arrow(Drawable):
         return res
 
     def draw(self, surface, uxctrol):
-        apply_scroll = lambda t: (t[0], uxctrol.apply_scroll_offset_y(t[1]))
+        apply_scroll = lambda t: (uxctrol.apply_offset_x(t[0]), \
+            uxctrol.apply_offset_y(t[1]))
     
         pygame.draw.line(surface, self.color, apply_scroll(self.start), \
             apply_scroll(self.end), 2)
@@ -354,7 +355,7 @@ class VertBar(Drawable):
         return res
 
     def draw(self, surface, uxctrol):
-        start = (self.posX, uxctrol.apply_scroll_offset_y(self.posY))
-        end = (self.endX, uxctrol.apply_scroll_offset_y(self.endY))
+        start = (uxctrol.apply_offset_x(self.posX), uxctrol.apply_offset_y(self.posY))
+        end = (uxctrol.apply_offset_x(self.endX), uxctrol.apply_offset_y(self.endY))
 
         pygame.draw.line(surface, self.color, start, end, 2)

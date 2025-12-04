@@ -8,12 +8,15 @@ class Control:
     def __init__(self):
         self.drawables = []
         self.dragging_object = None
+        self.dragging_view = False
+        self.last_free_mouse_pos = (0, 0)
+        # only used for object dragging
         self.mouse_offset = (0, 0)
 
     def add_drawable(self, drawable):
         self.drawables.append(drawable)
 
-    def handle_events(self, event):
+    def handle_events(self, event, uxctrol):
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Check if the mouse is over any drawable object
             for drawable in self.drawables:
@@ -21,12 +24,32 @@ class Control:
                     self.dragging_object = drawable
                     self.mouse_offset = (event.pos[0] - drawable.posX, event.pos[1] - drawable.posY)
                     break
+            
+
+            if not self.dragging_object and event.button == 1:
+                self.dragging_view = True
 
         elif event.type == pygame.MOUSEMOTION:
             # If dragging an object, update its position
 
-            for drawable in self.drawables:
-                drawable.is_mouse_over(event.pos)
+            if self.dragging_view:
+                mx, my = event.pos
+                last_x, last_y = self.last_free_mouse_pos
+
+                # delta movement
+                dx = mx - last_x
+                dy = my - last_y
+
+                # apply movement to your view offset
+                uxctrol.drag_offset_x += dx
+                uxctrol.drag_offset_y += dy
+
+                print("drag_offset_x = {0}".format(uxctrol.drag_offset_x))
+                print("drag_offset_y = {0}".format(uxctrol.drag_offset_y))
+
+                # update reference position
+                self.last_free_mouse_pos = (event.pos[0], event.pos[1])
+                return
 
             if self.dragging_object:
                 # self
@@ -42,11 +65,22 @@ class Control:
                 for child in self.dragging_object.attachedDrawables:
                     move_with_parent(child, delta_x, delta_y)
 
+                self.last_free_mouse_pos = (event.pos[0], event.pos[1])
+                return
+
+            for drawable in self.drawables:
+                drawable.is_mouse_over(event.pos)
+
+            self.last_free_mouse_pos = (event.pos[0], event.pos[1])
+
 
         elif event.type == pygame.MOUSEBUTTONUP:
             # Stop dragging when the mouse button is released
             if self.dragging_object:
                 self.dragging_object = None
+
+            if event.button == 1:
+                self.dragging_view = False
 
     def draw(self, surface, uxctrol):
         # Draw all the drawable objects
