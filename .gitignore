@@ -1,6 +1,7 @@
 *
 !*.py
 !.gitignore
+!LICENSE
 
 !/Drawing/
 /Drawing/*
