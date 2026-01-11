@@ -32,6 +32,7 @@ class Drawable:
         self.color = color
 
     def add_text(self, text_str):
+        return
         font = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
         self.label = font.render(text_str, True, (0, 0, 0))
 
@@ -57,8 +58,8 @@ class Drawable:
         pass
 
     @abstractmethod
-    def draw(self, surface, uxctrol):
-        """Draw the object on the surface."""
+    def draw(self, canvas_ctrl, uxctrol):
+        """Draw the object on the canvas_ctrl's surface (pygame or img)."""
         pass
 
     @abstractmethod
@@ -158,13 +159,17 @@ class Block(Drawable):
 
         return res
 
-    def draw(self, surface, uxctrol):
+    # legowelt 2
+    def draw(self, canvas_ctrl, uxctrol):
         # Draw a simple rectangle for Block
+        
+        x = uxctrol.apply_offset_x(self.posX)
+        y = uxctrol.apply_offset_y(self.posY)
 
-        pygame.draw.rect(surface, self.color, (uxctrol.apply_offset_x(self.posX), \
-            uxctrol.apply_offset_y(self.posY), self.sizeX, self.sizeY))
+        canvas_ctrl.draw_rect(self.color, x, y, self.sizeX, self.sizeY)
 
-        self.draw_text(surface, uxctrol)
+        # legowelt temp
+        #self.draw_text(canvas_ctrl.screen, uxctrol)
 
 # =================================================== ARROW ===================================================
 class Arrow(Drawable):
@@ -290,17 +295,17 @@ class Arrow(Drawable):
             res = True
         return res
 
-    def draw(self, surface, uxctrol):
+    # legowelt 3
+    def draw(self, canvas_ctrl, uxctrol):
         apply_scroll = lambda t: (uxctrol.apply_offset_x(t[0]), \
             uxctrol.apply_offset_y(t[1]))
-    
-        pygame.draw.line(surface, self.color, apply_scroll(self.start), \
-            apply_scroll(self.end), 2)
 
-        pygame.draw.polygon(surface, self.color, [apply_scroll(self.end), \
-            apply_scroll(self.left), apply_scroll(self.right)])
-
-        self.draw_text(surface, uxctrol)
+        canvas_ctrl.draw_arrow(self.color, apply_scroll(self.start), \
+            apply_scroll(self.end), apply_scroll(self.end), \
+            apply_scroll(self.left), apply_scroll(self.right))
+        
+        # legowelt temp
+        # self.draw_text(canvas_ctrl.screen, uxctrol)
 
 
 
@@ -365,9 +370,10 @@ class VertBar(Drawable):
             print("OVER VERT BAR")
             res = True
         return res
-
-    def draw(self, surface, uxctrol):
+    
+    # legowelt 1
+    def draw(self, canvas_ctrl, uxctrol):
         start = (uxctrol.apply_offset_x(self.posX), uxctrol.apply_offset_y(self.posY))
         end = (uxctrol.apply_offset_x(self.endX), uxctrol.apply_offset_y(self.endY))
 
-        pygame.draw.line(surface, self.color, start, end, 2)
+        canvas_ctrl.draw_line(self.color, start, end)

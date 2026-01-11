@@ -1,9 +1,11 @@
 import pygame
+from PIL import Image, ImageDraw
 import sys
 
 # Drawing
 import Drawing.Drawables as dr
 import Drawing.Control as ctrl
+import Drawing.CanvasControl as canvasctrl
 
 from Drawing.Style import colorful_style
 
@@ -25,7 +27,7 @@ MISC_WHITE = (255, 255, 255)
 MISC_LINE_COLOR = (0, 0, 0)  # Black
 
 
-def init():
+def pygame_init():
     # Initialize Pygame
     pygame.init()
 
@@ -37,6 +39,27 @@ def init():
     screen = pygame.display.set_mode((initial_width, initial_height), pygame.RESIZABLE)
     pygame.display.set_caption("Resizable Window - Fullscreen Size")
 
+    return screen, initial_width, initial_height
+
+def image_init(width, height):
+    image = Image.new("RGB", (width, height), MISC_WHITE)  # transparent bg
+    img_canvas = ImageDraw.Draw(image)
+
+    return image, img_canvas
+
+def init(interactive=True):
+    
+    canvas = None
+    image_obj = None
+    initial_width = None
+    initial_height = None
+    if interactive:
+        canvas, initial_width, initial_height = pygame_init()
+    else:
+        initial_width = 800
+        initial_height = 600
+        image_obj, canvas = image_init(initial_width, initial_height)
+
     # Track current window size
     current_width, current_height = initial_width, initial_height
     current_width = current_width * g.DEF_WIDTH_FACTOR
@@ -47,12 +70,16 @@ def init():
 
     control = ctrl.Control()
 
-    return screen, control
+    return canvas, image_obj, control
     
+def interactive_main():
+    print("WE ARE IN INTERACTIVE MAIN")
 
+    screen, _, control = init()
 
-def main():
-    screen, control = init()
+    canvas_ctrl = canvasctrl.CanvasControl(True)
+    canvas_ctrl.screen = screen
+
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
@@ -89,19 +116,49 @@ def main():
             control.handle_events(event, uxctrol)
 
         # Fill screen white
-        screen.fill(MISC_WHITE)
+        canvas_ctrl.screen.fill(MISC_WHITE)
 
         # Draw center vertical line
         center_x = current_width // 2
-        pygame.draw.line(screen, MISC_LINE_COLOR, (center_x, 0), (center_x, current_height), 2)
+        pygame.draw.line(canvas_ctrl.screen, MISC_LINE_COLOR, (center_x, 0), (center_x, current_height), 2)
 
         # Draw all the drawable objects in the control
-        control.draw(screen, uxctrol)
+        control.draw(canvas_ctrl, uxctrol)
 
         # Update display
         pygame.display.flip()
 
     pygame.quit()
     sys.exit()
+
+def image_main():
+    print("WE ARE IN IMAGE MAIN")
+    img_canvas, image_obj, control = init(False)
+
+    canvas_ctrl = canvasctrl.CanvasControl(False)
+    canvas_ctrl.img_canvas = img_canvas
+
+    pstate = pgs.GlobalState()
+    uxctrol = uxc.UXCtrl()
+
+    if len(sys.argv) >= 2:
+        filename = sys.argv[1]
+        for send, recv, msg in pctrl.parse_messages(filename):
+            control.build_comm_fragment(pstate, send, recv, msg)
+
+    control.apply_styling(colorful_style)
+    control.draw(canvas_ctrl, uxctrol)
+    image_obj.save("output.png")
+
+    sys.exit()
+
+def main():
+    if len(sys.argv) >= 3:
+        if sys.argv[2] == 'y':
+            image_main()
+        else:
+            interactive_main()
+    else:
+        interactive_main()
 
 main()

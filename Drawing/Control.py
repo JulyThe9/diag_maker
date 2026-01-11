@@ -82,10 +82,10 @@ class Control:
             if event.button == 1:
                 self.dragging_view = False
 
-    def draw(self, surface, uxctrol):
+    def draw(self, canvas_ctrl, uxctrol):
         # Draw all the drawable objects
         for drawable in self.drawables:
-            drawable.draw(surface, uxctrol)
+            drawable.draw(canvas_ctrl, uxctrol)
 
     def apply_styling(self, style: Style):
         for drawable in self.drawables:
