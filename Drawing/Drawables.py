@@ -32,7 +32,6 @@ class Drawable:
         self.color = color
 
     def add_text(self, text_str):
-        return
         font = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
         self.label = font.render(text_str, True, (0, 0, 0))
 
@@ -169,7 +168,7 @@ class Block(Drawable):
         canvas_ctrl.draw_rect(self.color, x, y, self.sizeX, self.sizeY)
 
         # legowelt temp
-        #self.draw_text(canvas_ctrl.screen, uxctrol)
+        self.draw_text(canvas_ctrl.screen, uxctrol)
 
 # =================================================== ARROW ===================================================
 class Arrow(Drawable):
@@ -305,7 +304,7 @@ class Arrow(Drawable):
             apply_scroll(self.left), apply_scroll(self.right))
         
         # legowelt temp
-        # self.draw_text(canvas_ctrl.screen, uxctrol)
+        self.draw_text(canvas_ctrl.screen, uxctrol)
 
 
 
