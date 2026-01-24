@@ -4,7 +4,10 @@ import math
 import pygame
 
 from .DrawableProps import DrawableProps, Sides
+
 from .BasicPoint import BasicPoint
+from .TextStruct import TextStruct
+
 import Globals as g
 
 class ShapeType(Enum):
@@ -23,6 +26,7 @@ class Drawable:
         self.sizeX = sizeX
         self.sizeY = sizeY
         self.color = (0, 0, 0)
+        self.text_struct = TextStruct()
         self.attachedDrawables = []
 
     def attach(self, drawable):
@@ -32,24 +36,44 @@ class Drawable:
         self.color = color
 
     def add_text(self, text_str):
-        font = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
-        self.label = font.render(text_str, True, (0, 0, 0))
+        self.text_struct.text_str = text_str
 
         self.props.has_text = True
         self.calculate_text_label_pos()
 
-        self.text_rect = self.label.get_rect(topleft=(self.props.get_text_label_pos().x, \
-            self.props.get_text_label_pos().y))
+        self.text_struct.text_rect_x = self.props.get_text_label_pos().x
+        self.text_struct.text_rect_y = self.props.get_text_label_pos().y
 
         self.props.diff_to_text_x = self.props.get_text_label_pos().x - self.posX
         self.props.diff_to_text_y = self.props.get_text_label_pos().y - self.posY
 
-    def draw_text(self, surface, uxctrol):
+    def draw_text(self, canvas_ctrl, uxctrol):
         if self.props.has_text:
-            text_rect = self.label.get_rect(topleft=(uxctrol.apply_offset_x(self.text_rect.x), \
-                uxctrol.apply_offset_y(self.text_rect.y)))
 
-            surface.blit(self.label, text_rect)
+            # store un-offset
+            cur_text_rect_x = self.text_struct.text_rect_x
+            cur_text_rect_y = self.text_struct.text_rect_y
+
+            # text_rect = self.label.get_rect(topleft=(uxctrol.apply_offset_x(self.text_rect.x), \
+            #     uxctrol.apply_offset_y(self.text_rect.y)))
+
+            # surface.blit(self.label, text_rect)
+
+            # temporarily apply offset
+            self.text_struct.text_rect_x = uxctrol.apply_offset_x(cur_text_rect_x)
+            self.text_struct.text_rect_y = uxctrol.apply_offset_y(cur_text_rect_y)
+            
+            # might get rid of it one place or another anyway
+            self.text_struct.label_x = self.props.get_text_label_pos().x
+            self.text_struct.label_y = self.props.get_text_label_pos().y
+
+            # draw with offset
+            canvas_ctrl.draw_text(self.text_struct)
+
+            # restore un-offset
+            self.text_struct.text_rect_x = cur_text_rect_x
+            self.text_struct.text_rect_y = cur_text_rect_y
+
 
     @abstractmethod
     def calc_properties(self):
@@ -74,7 +98,9 @@ class Drawable:
         if self.props.has_text:
             self.props.set_text_label_pos(self.posX + self.props.diff_to_text_x, \
                 self.posY + self.props.diff_to_text_y)
-            self.text_rect.topleft = (self.props.get_text_label_pos().x, self.props.get_text_label_pos().y) 
+            #self.text_rect.topleft = (self.props.get_text_label_pos().x, self.props.get_text_label_pos().y)
+            self.text_struct.text_rect_x = self.props.get_text_label_pos().x
+            self.text_struct.text_rect_y = self.props.get_text_label_pos().y
 
     def set_position(self, x, y):
         self.posX = x
@@ -107,17 +133,16 @@ class Block(Drawable):
 
     def calculate_text_label_pos(self):
         rp_east = self.props.get_ref_point(Sides.E)
-        #x = self.posX + self.sizeX * g.DEF_BLOCK_TEXT_X_MARG_FACT
-
+        
         offset = 0
-        if self.props.has_text:
-            if self.label.get_width() <= self.sizeX:
-                offset = abs(self.sizeX - self.label.get_width()) / 2
+        # legowelt8
+        # if self.props.has_text:
+        #     if self.label.get_width() <= self.sizeX:
+        #         offset = abs(self.sizeX - self.label.get_width()) / 2
 
         x = self.posX + offset
 
         y = rp_east.y
-        # legowelt
         # print("{0} : {1}".format(self.posX,self.sizeX))
         self.props.set_text_label_pos(x,y)
 
@@ -168,7 +193,7 @@ class Block(Drawable):
         canvas_ctrl.draw_rect(self.color, x, y, self.sizeX, self.sizeY)
 
         # legowelt temp
-        self.draw_text(canvas_ctrl.screen, uxctrol)
+        self.draw_text(canvas_ctrl, uxctrol)
 
 # =================================================== ARROW ===================================================
 class Arrow(Drawable):
@@ -195,7 +220,8 @@ class Arrow(Drawable):
         offset = 0
         x = 0
         if self.props.has_text:
-            if self.label.get_width() <= self.sizeX:
+            # legowelt8
+            if False and self.label.get_width() <= self.sizeX:
                 offset = abs(self.sizeX - self.label.get_width()) / 2
                 if not self.left_to_right():
                     # two thirds from right to left
@@ -304,7 +330,7 @@ class Arrow(Drawable):
             apply_scroll(self.left), apply_scroll(self.right))
         
         # legowelt temp
-        self.draw_text(canvas_ctrl.screen, uxctrol)
+        self.draw_text(canvas_ctrl, uxctrol)
 
 
 
