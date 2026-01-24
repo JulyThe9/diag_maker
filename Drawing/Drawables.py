@@ -17,9 +17,15 @@ class ShapeType(Enum):
 
 # =================================================== DRAWABLE ===================================================
 class Drawable:
+    _next_id = 0
+
     def __init__(self, shape_type: ShapeType, posX: int, posY: int, sizeX: int, sizeY: int):
         if not isinstance(shape_type, ShapeType):
             raise ValueError("shape_type must be an instance of ShapeType Enum")
+
+        self.ID = Drawable._next_id
+        Drawable._next_id += 1
+
         self.shape_type = shape_type
         self.posX = posX
         self.posY = posY
@@ -29,16 +35,20 @@ class Drawable:
         self.text_struct = TextStruct()
         self.attachedDrawables = []
 
+    def set_id(self, new_id):
+        if (self.ID < 0):
+            self.ID = new_id
+
     def attach(self, drawable):
         self.attachedDrawables.append(drawable)
 
     def set_color(self, color):
         self.color = color
 
-    def add_text(self, text_str):
+    def add_text(self, text_str, canvas_ctrl):
         self.text_struct.text_str = text_str
-
         self.props.has_text = True
+
         self.calculate_text_label_pos()
 
         self.text_struct.text_rect_x = self.text_struct.label_x
@@ -46,6 +56,11 @@ class Drawable:
 
         self.props.diff_to_text_x = self.text_struct.label_x - self.posX
         self.props.diff_to_text_y = self.text_struct.label_y - self.posY
+
+        if self.ID >= 0:
+            canvas_ctrl.add_text(self.ID, text_str)
+        else:
+            print("WARNING: ADDING TEXT BEFORE ID IS SET")
 
     def draw_text(self, canvas_ctrl, uxctrol):
         if self.props.has_text:
@@ -64,7 +79,7 @@ class Drawable:
             self.text_struct.text_rect_y = uxctrol.apply_offset_y(cur_text_rect_y)
 
             # draw with offset
-            canvas_ctrl.draw_text(self.text_struct)
+            canvas_ctrl.draw_text(self.ID, self.text_struct)
 
             # restore un-offset
             self.text_struct.text_rect_x = cur_text_rect_x

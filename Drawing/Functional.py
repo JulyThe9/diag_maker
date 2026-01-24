@@ -125,7 +125,7 @@ def add_block_to_vbar(control, parent, block_width = g.DEF_BLOCK_WIDTH):
 
     return block
 
-def bar_to_bar(control, src, dst, label = None):
+def bar_to_bar(control, canvas_ctrl, src, dst, label = None):
     if src == None or dst == None:
         return None
 
@@ -150,7 +150,7 @@ def bar_to_bar(control, src, dst, label = None):
     
     connect_arrow = dr.Arrow(posX=src_rp.x, posY=src_rp.y, endX=dst_rp.x, endY=dst_rp.y)
     if label != None:
-        connect_arrow.add_text(label)
+        connect_arrow.add_text(label, canvas_ctrl)
 
     control.add_drawable(connect_arrow)
 

@@ -89,7 +89,7 @@ def interactive_main():
             # print("Sender:", sender)
             # print("Receiver:", receiver)
             # print("Message:", msg)
-            control.build_comm_fragment(pstate, send, recv, msg)
+            control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     # TODO: unit test idea
     # print("legowelt")
@@ -144,7 +144,7 @@ def image_main():
     if len(sys.argv) >= 2:
         filename = sys.argv[1]
         for send, recv, msg in pctrl.parse_messages(filename):
-            control.build_comm_fragment(pstate, send, recv, msg)
+            control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     control.apply_styling(colorful_style)
     control.draw(canvas_ctrl, uxctrol)

@@ -99,7 +99,7 @@ class Control:
     #     return self.drawables[idx]
 
     
-    def build_comm_fragment(self, pstate, send, recv, msg):
+    def build_comm_fragment(self, pstate, canvas_ctrl, send, recv, msg):
         send_bar = recv_bar = None
 
         # print ("processing {0}".format(send))
@@ -111,7 +111,7 @@ class Control:
             block = fn.add_rect(self, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
             
             if block:
-                block.add_text(send)
+                block.add_text(send, canvas_ctrl)
 
             send_bar = fn.add_vbar(self, block)
             pstate.comm_entities[send] = send_bar
@@ -122,12 +122,12 @@ class Control:
             block = fn.add_rect(self, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
             
             if block:
-                block.add_text(recv)
+                block.add_text(recv, canvas_ctrl)
 
             recv_bar = fn.add_vbar(self, block)
             pstate.comm_entities[recv] = recv_bar
         
-        fn.bar_to_bar(self, send_bar, recv_bar, msg)
+        fn.bar_to_bar(self, canvas_ctrl, send_bar, recv_bar, msg)
         
 
 
