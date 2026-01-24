@@ -69,11 +69,6 @@ class Drawable:
             cur_text_rect_x = self.text_struct.text_rect_x
             cur_text_rect_y = self.text_struct.text_rect_y
 
-            # text_rect = self.label.get_rect(topleft=(uxctrol.apply_offset_x(self.text_rect.x), \
-            #     uxctrol.apply_offset_y(self.text_rect.y)))
-
-            # surface.blit(self.label, text_rect)
-
             # temporarily apply offset
             self.text_struct.text_rect_x = uxctrol.apply_offset_x(cur_text_rect_x)
             self.text_struct.text_rect_y = uxctrol.apply_offset_y(cur_text_rect_y)
@@ -107,13 +102,9 @@ class Drawable:
     
     def set_props_text_label_pos(self):
         if self.props.has_text:
-            # self.props.set_text_label_pos(self.posX + self.props.diff_to_text_x, \
-                # self.posY + self.props.diff_to_text_y)
-
             self.text_struct.label_x = self.posX + self.props.diff_to_text_x
             self.text_struct.label_y = self.posY + self.props.diff_to_text_y
 
-            #self.text_rect.topleft = (self.props.get_text_label_pos().x, self.props.get_text_label_pos().y)
             self.text_struct.text_rect_x = text_struct.label_x
             self.text_struct.text_rect_y = text_struct.label_y
 

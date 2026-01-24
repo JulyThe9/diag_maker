@@ -56,8 +56,8 @@ def init(interactive=True):
     if interactive:
         canvas, initial_width, initial_height = pygame_init()
     else:
-        initial_width = 800
-        initial_height = 600
+        initial_width = 3000
+        initial_height = 6000
         image_obj, canvas = image_init(initial_width, initial_height)
 
     # Track current window size
