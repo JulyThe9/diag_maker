@@ -41,11 +41,11 @@ class Drawable:
         self.props.has_text = True
         self.calculate_text_label_pos()
 
-        self.text_struct.text_rect_x = self.props.get_text_label_pos().x
-        self.text_struct.text_rect_y = self.props.get_text_label_pos().y
+        self.text_struct.text_rect_x = self.text_struct.label_x
+        self.text_struct.text_rect_y = self.text_struct.label_y
 
-        self.props.diff_to_text_x = self.props.get_text_label_pos().x - self.posX
-        self.props.diff_to_text_y = self.props.get_text_label_pos().y - self.posY
+        self.props.diff_to_text_x = self.text_struct.label_x - self.posX
+        self.props.diff_to_text_y = self.text_struct.label_y - self.posY
 
     def draw_text(self, canvas_ctrl, uxctrol):
         if self.props.has_text:
@@ -62,10 +62,6 @@ class Drawable:
             # temporarily apply offset
             self.text_struct.text_rect_x = uxctrol.apply_offset_x(cur_text_rect_x)
             self.text_struct.text_rect_y = uxctrol.apply_offset_y(cur_text_rect_y)
-            
-            # might get rid of it one place or another anyway
-            self.text_struct.label_x = self.props.get_text_label_pos().x
-            self.text_struct.label_y = self.props.get_text_label_pos().y
 
             # draw with offset
             canvas_ctrl.draw_text(self.text_struct)
@@ -96,11 +92,15 @@ class Drawable:
     
     def set_props_text_label_pos(self):
         if self.props.has_text:
-            self.props.set_text_label_pos(self.posX + self.props.diff_to_text_x, \
-                self.posY + self.props.diff_to_text_y)
+            # self.props.set_text_label_pos(self.posX + self.props.diff_to_text_x, \
+                # self.posY + self.props.diff_to_text_y)
+
+            self.text_struct.label_x = self.posX + self.props.diff_to_text_x
+            self.text_struct.label_y = self.posY + self.props.diff_to_text_y
+
             #self.text_rect.topleft = (self.props.get_text_label_pos().x, self.props.get_text_label_pos().y)
-            self.text_struct.text_rect_x = self.props.get_text_label_pos().x
-            self.text_struct.text_rect_y = self.props.get_text_label_pos().y
+            self.text_struct.text_rect_x = text_struct.label_x
+            self.text_struct.text_rect_y = text_struct.label_y
 
     def set_position(self, x, y):
         self.posX = x
@@ -140,11 +140,9 @@ class Block(Drawable):
         #     if self.label.get_width() <= self.sizeX:
         #         offset = abs(self.sizeX - self.label.get_width()) / 2
 
-        x = self.posX + offset
-
-        y = rp_east.y
         # print("{0} : {1}".format(self.posX,self.sizeX))
-        self.props.set_text_label_pos(x,y)
+        self.text_struct.label_x = self.posX + offset
+        self.text_struct.label_y = rp_east.y
 
     def calc_properties(self):
         # Block doesn't need any special calculations, so this method is empty.
@@ -239,7 +237,8 @@ class Arrow(Drawable):
         _, bounding_box_y, _, height = self.bounding_box
         y = bounding_box_y - height * g.DEF_BLOCK_TEXT_Y_MARG_FACT
 
-        self.props.set_text_label_pos(x,y)
+        self.text_struct.label_x = x
+        self.text_struct.label_y = y
 
     def calc_properties(self):
         # Calculate the properties needed for drawing the arrow
