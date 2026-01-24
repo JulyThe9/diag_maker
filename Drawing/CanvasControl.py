@@ -42,22 +42,22 @@ class CanvasControl:
         if self.use_pygame:
             if holder_id in self.labels:
                 return
-            self.labels[holder_id] = \
-                pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).\
+            label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).\
                 render(text_str, True, (0, 0, 0))
+            self.labels[holder_id] = label
+            return label.get_width()
+                  
+        return 0
 
-    def draw_text_pygame(self, holder_id, text_struct):
-        
-        # maybe TODO: originally from calculate_text_label_pos
-        # offset = 0
-        # if self.props.has_text:
-        #     if self.label.get_width() <= self.sizeX:
-        #         offset = abs(self.sizeX - self.label.get_width()) / 2
+    def get_label_width(self, holder_id):
+        label = self.labels.get(holder_id)
+        if label:
+            return label.get_width()
+        else:
+            # TODO: image
+            return 0
 
-        # x = self.posX + offset
-
-        #label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).render(text_struct.text_str, True, (0, 0, 0))
-        
+    def draw_text_pygame(self, holder_id, text_struct): 
         label = self.labels.get(holder_id)
         if not label:
             return

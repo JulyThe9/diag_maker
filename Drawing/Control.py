@@ -130,8 +130,6 @@ class Control:
         fn.bar_to_bar(self, canvas_ctrl, send_bar, recv_bar, msg)
         
 
-
-
 # free functions
 def move_with_parent(drawable, delta_x, delta_y):
     drawable.set_position(drawable.posX + delta_x, drawable.posY + delta_y)

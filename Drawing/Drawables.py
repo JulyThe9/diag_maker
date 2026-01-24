@@ -49,18 +49,18 @@ class Drawable:
         self.text_struct.text_str = text_str
         self.props.has_text = True
 
-        self.calculate_text_label_pos()
+        text_width = 0
+        if self.ID >= 0:
+            text_width = canvas_ctrl.add_text(self.ID, text_str)
+        else:
+            print("WARNING: ADDING TEXT BEFORE ID IS SET")
+        self.calculate_text_label_pos(text_width)
 
         self.text_struct.text_rect_x = self.text_struct.label_x
         self.text_struct.text_rect_y = self.text_struct.label_y
 
         self.props.diff_to_text_x = self.text_struct.label_x - self.posX
         self.props.diff_to_text_y = self.text_struct.label_y - self.posY
-
-        if self.ID >= 0:
-            canvas_ctrl.add_text(self.ID, text_str)
-        else:
-            print("WARNING: ADDING TEXT BEFORE ID IS SET")
 
     def draw_text(self, canvas_ctrl, uxctrol):
         if self.props.has_text:
@@ -146,14 +146,13 @@ class Block(Drawable):
         self.props.add_ref_point_sides(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY + self.sizeY / 2)) # C
         self.props.add_ref_point_sides(Sides.S, BasicPoint(self.posX + self.sizeX / 2, self.posY + self.sizeY)) # D
 
-    def calculate_text_label_pos(self):
+    def calculate_text_label_pos(self, text_width):
         rp_east = self.props.get_ref_point(Sides.E)
         
         offset = 0
-        # legowelt8
-        # if self.props.has_text:
-        #     if self.label.get_width() <= self.sizeX:
-        #         offset = abs(self.sizeX - self.label.get_width()) / 2
+        if self.props.has_text:
+            if text_width <= self.sizeX:
+                offset = abs(self.sizeX - text_width) / 2
 
         # print("{0} : {1}".format(self.posX,self.sizeX))
         self.text_struct.label_x = self.posX + offset
@@ -226,19 +225,18 @@ class Arrow(Drawable):
     def left_to_right(self):
         return self.posX < self.endX
 
-    def calculate_text_label_pos(self):
+    def calculate_text_label_pos(self, text_width):
         print ('arrow calculcate')
         rp_east = self.props.get_ref_point(Sides.E)
 
         offset = 0
         x = 0
         if self.props.has_text:
-            # legowelt8
-            if False and self.label.get_width() <= self.sizeX:
-                offset = abs(self.sizeX - self.label.get_width()) / 2
+            if text_width <= self.sizeX:
+                offset = abs(self.sizeX - text_width) / 2
                 if not self.left_to_right():
                     # two thirds from right to left
-                    offset = -(offset + self.label.get_width())
+                    offset = -(offset + text_width)
                 x = self.posX + offset
             # too big to fit case,
             # ltr text starts at line start
