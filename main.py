@@ -1,7 +1,7 @@
 import pygame
 from PIL import Image, ImageDraw
 import sys
-from enum import Enum, auto
+
 
 # Drawing
 import Drawing.Drawables as dr
@@ -27,11 +27,6 @@ import UX.UXCtrl as uxc
 MISC_WHITE = (255, 255, 255)
 MISC_LINE_COLOR = (0, 0, 0)  # Black
 
-class Mode(Enum):
-    INTERACTIVE = auto()
-    PNG = auto()
-    SVG = auto()
-
 def pygame_init():
     # Initialize Pygame
     pygame.init()
@@ -52,20 +47,20 @@ def image_init(width, height):
 
     return image, img_canvas
 
-def init(mode=Mode.INTERACTIVE):
+def init(mode=g.Mode.INTERACTIVE):
     
     canvas = None
     image_obj = None
     initial_width = None
     initial_height = None
     
-    if mode == Mode.INTERACTIVE:
+    if mode == g.Mode.INTERACTIVE:
         canvas, initial_width, initial_height = pygame_init()
-    elif mode == Mode.PNG:
+    elif mode == g.Mode.PNG:
         initial_width = 3000
         initial_height = 6000
         image_obj, canvas = image_init(initial_width, initial_height)
-    elif mode == Mode.SVG:
+    elif mode == g.Mode.SVG:
         initial_width = 3000
         initial_height = 6000
         # For SVG we don't need a canvas/image object for drawing context
@@ -87,9 +82,9 @@ def init(mode=Mode.INTERACTIVE):
 def interactive_main():
     print("WE ARE IN INTERACTIVE MAIN")
 
-    screen, _, control = init(Mode.INTERACTIVE)
+    screen, _, control = init(g.Mode.INTERACTIVE)
 
-    canvas_ctrl = canvasctrl.CanvasControl(True)
+    canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.INTERACTIVE)
     canvas_ctrl.screen = screen
 
     pstate = pgs.GlobalState()
@@ -145,9 +140,9 @@ def interactive_main():
 
 def image_main():
     print("WE ARE IN IMAGE MAIN")
-    img_canvas, image_obj, control = init(Mode.PNG)
+    img_canvas, image_obj, control = init(g.Mode.PNG)
 
-    canvas_ctrl = canvasctrl.CanvasControl(False)
+    canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.PNG)
     canvas_ctrl.img_canvas = img_canvas
 
     pstate = pgs.GlobalState()
@@ -167,10 +162,10 @@ def image_main():
 def svg_main():
     print("WE ARE IN SVG MAIN")
     
-    # We use mode=Mode.SVG to set up global props but avoid creating PIL images
-    img_canvas, image_obj, control = init(Mode.SVG)
+    # We use mode=g.Mode.SVG to set up global props but avoid creating PIL images
+    img_canvas, image_obj, control = init(g.Mode.SVG)
     
-    canvas_ctrl = canvasctrl.CanvasControl(use_pygame=False, use_svg=True)
+    canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.SVG)
     
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()

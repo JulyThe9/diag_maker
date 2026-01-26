@@ -1,11 +1,14 @@
+from enum import Enum, auto
+
 global_props = None
 
+# Dimensions
 DEF_BLOCK_SIZE = 50
 DEF_BLOCK_WIDTH = 100
 DEF_GAP = 15
 DEF_VBAR_SIZE = 4000
 
-# temporary
+# Temporary
 DEF_NUM_COMPONENTS = 4
 
 DEF_WIDTH_FACTOR = 0.8
@@ -16,3 +19,10 @@ DEF_BLOCK_TEXT_Y_MARG_FACT = 0.2
 
 # UX
 DEF_SCROLL_SPEED_FACT = 20
+
+# Modes
+
+class Mode(Enum):
+    INTERACTIVE = auto()
+    PNG = auto()
+    SVG = auto()

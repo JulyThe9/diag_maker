@@ -2,10 +2,11 @@ import pygame
 import html
 from PIL import Image, ImageDraw, ImageFont
 
+import Globals as g
+
 class CanvasControl:
-    def __init__(self, use_pygame=True, use_svg=False):
-       self.use_pygame = use_pygame
-       self.use_svg = use_svg
+    def __init__(self, mode=g.Mode.INTERACTIVE):
+       self.mode = mode
        self.screen = None
        self.img_canvas = None
        self.pygame_labels = {}
@@ -16,10 +17,10 @@ class CanvasControl:
         return f"rgb({color[0]},{color[1]},{color[2]})"
 
     def draw_line(self, color, start, end):
-        if self.use_pygame:
+        if self.mode == g.Mode.INTERACTIVE:
             if self.screen:
                 pygame.draw.line(self.screen, color, start, end, 2)
-        elif self.use_svg:
+        elif self.mode == g.Mode.SVG:
             stroke = self._to_svg_color(color)
             self.svg_elements.append(
                 f'<line x1="{start[0]}" y1="{start[1]}" x2="{end[0]}" y2="{end[1]}" '
@@ -29,10 +30,10 @@ class CanvasControl:
             self.img_canvas.line([start, end], fill=color, width=2)
     
     def draw_rect(self, color, x, y, w, h):
-        if self.use_pygame:
+        if self.mode == g.Mode.INTERACTIVE:
             if self.screen:
                 pygame.draw.rect(self.screen, color, (x, y, w, h))
-        elif self.use_svg:
+        elif self.mode == g.Mode.SVG:
             fill = self._to_svg_color(color)
             self.svg_elements.append(
                 f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{fill}" />'
@@ -48,11 +49,11 @@ class CanvasControl:
         self.draw_line(color, start, end)
 
         # arrow head
-        if self.use_pygame:
+        if self.mode == g.Mode.INTERACTIVE:
             if self.screen:
                 pygame.draw.polygon(self.screen, color, [head_end, \
                     head_left, head_right])
-        elif self.use_svg:
+        elif self.mode == g.Mode.SVG:
             fill = self._to_svg_color(color)
             points = f"{head_end[0]},{head_end[1]} {head_left[0]},{head_left[1]} {head_right[0]},{head_right[1]}"
             self.svg_elements.append(
@@ -68,7 +69,7 @@ class CanvasControl:
 
     # holder == holder of the text 
     def add_text(self, holder_id, text_str):
-        if self.use_pygame:
+        if self.mode == g.Mode.INTERACTIVE:
             if holder_id in self.pygame_labels:
                 return
             label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).\
@@ -87,7 +88,7 @@ class CanvasControl:
         return 0
 
     def get_text_width(self, holder_id, text_str=""):
-        if self.use_pygame:
+        if self.mode == g.Mode.INTERACTIVE:
             label = self.pygame_labels.get(holder_id)
             if label:
                 return label.get_width()
@@ -134,15 +135,15 @@ class CanvasControl:
         )
 
     def draw_text(self, holder_id, text_struct):
-        if self.use_pygame:
+        if self.mode == g.Mode.INTERACTIVE:
             self.draw_text_pygame(holder_id, text_struct)
-        elif self.use_svg:
+        elif self.mode == g.Mode.SVG:
             self.draw_text_svg(holder_id, text_struct)
         else:
             self.draw_text_png(holder_id, text_struct)
 
     def save_svg(self, filename, width, height):
-        if not self.use_svg:
+        if self.mode != g.Mode.SVG:
             print("Warning: CanvasControl not initialized for SVG. Calling save_svg does nothing.")
             return
 
