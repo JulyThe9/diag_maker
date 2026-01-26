@@ -1,6 +1,7 @@
 import pygame
 from PIL import Image, ImageDraw
 import sys
+from enum import Enum, auto
 
 # Drawing
 import Drawing.Drawables as dr
@@ -26,6 +27,10 @@ import UX.UXCtrl as uxc
 MISC_WHITE = (255, 255, 255)
 MISC_LINE_COLOR = (0, 0, 0)  # Black
 
+class Mode(Enum):
+    INTERACTIVE = auto()
+    PNG = auto()
+    SVG = auto()
 
 def pygame_init():
     # Initialize Pygame
@@ -47,18 +52,25 @@ def image_init(width, height):
 
     return image, img_canvas
 
-def init(interactive=True):
+def init(mode=Mode.INTERACTIVE):
     
     canvas = None
     image_obj = None
     initial_width = None
     initial_height = None
-    if interactive:
+    
+    if mode == Mode.INTERACTIVE:
         canvas, initial_width, initial_height = pygame_init()
-    else:
+    elif mode == Mode.PNG:
         initial_width = 3000
         initial_height = 6000
         image_obj, canvas = image_init(initial_width, initial_height)
+    elif mode == Mode.SVG:
+        initial_width = 3000
+        initial_height = 6000
+        # For SVG we don't need a canvas/image object for drawing context
+        canvas = None
+        image_obj = None
 
     # Track current window size
     current_width, current_height = initial_width, initial_height
@@ -75,7 +87,7 @@ def init(interactive=True):
 def interactive_main():
     print("WE ARE IN INTERACTIVE MAIN")
 
-    screen, _, control = init()
+    screen, _, control = init(Mode.INTERACTIVE)
 
     canvas_ctrl = canvasctrl.CanvasControl(True)
     canvas_ctrl.screen = screen
@@ -133,7 +145,7 @@ def interactive_main():
 
 def image_main():
     print("WE ARE IN IMAGE MAIN")
-    img_canvas, image_obj, control = init(False)
+    img_canvas, image_obj, control = init(Mode.PNG)
 
     canvas_ctrl = canvasctrl.CanvasControl(False)
     canvas_ctrl.img_canvas = img_canvas
@@ -152,10 +164,40 @@ def image_main():
 
     sys.exit()
 
+def svg_main():
+    print("WE ARE IN SVG MAIN")
+    
+    # We use mode=Mode.SVG to set up global props but avoid creating PIL images
+    img_canvas, image_obj, control = init(Mode.SVG)
+    
+    canvas_ctrl = canvasctrl.CanvasControl(use_pygame=False, use_svg=True)
+    
+    pstate = pgs.GlobalState()
+    uxctrol = uxc.UXCtrl()
+
+    if len(sys.argv) >= 2:
+        filename = sys.argv[1]
+        for send, recv, msg in pctrl.parse_messages(filename):
+            control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+
+    control.apply_styling(colorful_style)
+    control.draw(canvas_ctrl, uxctrol)
+    
+    # Use the dimensions from GlobalProps or the initial huge dimensions
+    width = g.global_props.win_width if hasattr(g, 'global_props') else 3000
+    height = g.global_props.win_height if hasattr(g, 'global_props') else 6000
+    
+    canvas_ctrl.save_svg("output.svg", int(width), int(height))
+    print("Saved output.svg")
+
+    sys.exit()
+
 def main():
     if len(sys.argv) >= 3:
         if sys.argv[2] == 'y':
             image_main()
+        elif sys.argv[2] == 's':
+            svg_main()
         else:
             interactive_main()
     else:
