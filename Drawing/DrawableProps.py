@@ -61,7 +61,6 @@ class DrawableProps:
             ref_point = self.__get_next_ref_point_list(update)
         else:
             ref_point = self.__get_next_ref_point_sides(update)
-
         if ref_point is None:
             raise ValueError("Next reference point could not be determined.")
         return ref_point
