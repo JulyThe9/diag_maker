@@ -1,0 +1,16 @@
+*
+!*.py
+!.gitignore
+!LICENSE
+
+!/Drawing/
+/Drawing/*
+!/Drawing/*.py
+
+!/Parser/
+/Pareser/*
+!/Parser/*.py
+
+!/UX/
+/UX/*
+!/UX/*.py
