@@ -61,7 +61,7 @@ def add_rect(control, rectWidth, parent=None, parentSide=None, blockSide=None):
     return add_block(control, parent, parentSide, blockSide, rectWidth)
 
 def add_block(control, parent=None, parentSide=None, blockSide=None, blockWidth = g.DEF_BLOCK_WIDTH):
-    if not parent == None:
+    if parent:
         
         if parentSide:
             p = parent.get_ref_point(parentSide)

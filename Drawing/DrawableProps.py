@@ -58,9 +58,13 @@ class DrawableProps:
 
     def get_next_ref_point(self, update=False):
         if self.ref_points_are_list:
-            return self.__get_next_ref_point_list(update)
+            ref_point = self.__get_next_ref_point_list(update)
         else:
-            return self.__get_next_ref_point_sides(update)
+            ref_point = self.__get_next_ref_point_sides(update)
+
+        if ref_point is None:
+            raise ValueError("Next reference point could not be determined.")
+        return ref_point
 
     def get_ref_point(self, side: Sides, update: bool = False) -> MarkedPoint | None:
         """Lookup a MarkedPoint by side. If update=True, mark it as used."""

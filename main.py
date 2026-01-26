@@ -48,8 +48,16 @@ def image_init(width, height):
 
     return image, img_canvas
 
-def init(mode=g.Mode.INTERACTIVE):
+def count_unique_entities(messages):
+    unique_entities = set()
     
+    for send, recv, _ in messages:
+        unique_entities.add(send)
+        unique_entities.add(recv)
+    
+    return len(unique_entities)
+
+def init(mode=g.Mode.INTERACTIVE, num_components=g.DEF_NUM_COMPONENTS):    
     canvas = None
     image_obj = None
     initial_width = None
@@ -70,11 +78,16 @@ def init(mode=g.Mode.INTERACTIVE):
 
     # Track current window size
     current_width, current_height = initial_width, initial_height
-    current_width = current_width * g.DEF_WIDTH_FACTOR
+    #current_width = current_width * g.DEF_WIDTH_FACTOR
 
     print (current_width)
     g.global_props = glprops.GlobalProps(current_height, current_width)
-    g.global_props.fill_in_base_positions(g.DEF_NUM_COMPONENTS)
+
+    if mode == g.Mode.INTERACTIVE:
+        g.global_props.fill_in_base_positions(num_components, g.DEF_IMAGE_WIDTH_MARGIN_FACT)
+    else:
+        g.global_props.fill_in_base_positions(num_components, \
+            g.DEF_IMAGE_WIDTH_MARGIN_FACT, g.DEF_IMAGE_HEIGHT_MARGIN_FACT)
 
     control = ctrl.Control()
 
@@ -83,7 +96,10 @@ def init(mode=g.Mode.INTERACTIVE):
 def interactive_main(filename):
     print("WE ARE IN INTERACTIVE MAIN")
 
-    screen, _, control = init(g.Mode.INTERACTIVE)
+    messages = list(pctrl.parse_messages(filename))
+    num_components = count_unique_entities(messages)
+
+    screen, _, control = init(g.Mode.INTERACTIVE, num_components)
 
     canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.INTERACTIVE)
     canvas_ctrl.screen = screen
@@ -91,7 +107,7 @@ def interactive_main(filename):
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
-    for send, recv, msg in pctrl.parse_messages(filename):
+    for send, recv, msg in messages:
         control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     # TODO: unit test idea
@@ -136,7 +152,11 @@ def interactive_main(filename):
 
 def png_main(filename):
     print("WE ARE IN IMAGE MAIN")
-    img_canvas, image_obj, control = init(g.Mode.PNG)
+
+    messages = list(pctrl.parse_messages(filename))
+    num_components = count_unique_entities(messages)
+
+    img_canvas, image_obj, control = init(g.Mode.PNG, num_components)
 
     canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.PNG)
     canvas_ctrl.img_canvas = img_canvas
@@ -144,7 +164,7 @@ def png_main(filename):
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
-    for send, recv, msg in pctrl.parse_messages(filename):
+    for send, recv, msg in messages:
         control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     control.apply_styling(colorful_style)
@@ -156,15 +176,18 @@ def png_main(filename):
 def svg_main(filename):
     print("WE ARE IN SVG MAIN")
     
+    messages = list(pctrl.parse_messages(filename))
+    num_components = count_unique_entities(messages)
+
     # We use mode=g.Mode.SVG to set up global props but avoid creating PIL images
-    img_canvas, image_obj, control = init(g.Mode.SVG)
+    img_canvas, image_obj, control = init(g.Mode.SVG, num_components)
     
     canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.SVG)
     
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
-    for send, recv, msg in pctrl.parse_messages(filename):
+    for send, recv, msg in messages:
         control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     control.apply_styling(colorful_style)
