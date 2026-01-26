@@ -1,6 +1,7 @@
 import pygame
 from PIL import Image, ImageDraw
 import sys
+import argparse
 
 
 # Drawing
@@ -79,7 +80,7 @@ def init(mode=g.Mode.INTERACTIVE):
 
     return canvas, image_obj, control
     
-def interactive_main():
+def interactive_main(filename):
     print("WE ARE IN INTERACTIVE MAIN")
 
     screen, _, control = init(g.Mode.INTERACTIVE)
@@ -90,13 +91,8 @@ def interactive_main():
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
-    if len(sys.argv) >= 2:
-        filename = sys.argv[1]
-        for send, recv, msg in pctrl.parse_messages(filename):
-            # print("Sender:", sender)
-            # print("Receiver:", receiver)
-            # print("Message:", msg)
-            control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+    for send, recv, msg in pctrl.parse_messages(filename):
+        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     # TODO: unit test idea
     # print("legowelt")
@@ -138,7 +134,7 @@ def interactive_main():
     pygame.quit()
     sys.exit()
 
-def image_main():
+def png_main(filename):
     print("WE ARE IN IMAGE MAIN")
     img_canvas, image_obj, control = init(g.Mode.PNG)
 
@@ -148,10 +144,8 @@ def image_main():
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
-    if len(sys.argv) >= 2:
-        filename = sys.argv[1]
-        for send, recv, msg in pctrl.parse_messages(filename):
-            control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+    for send, recv, msg in pctrl.parse_messages(filename):
+        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     control.apply_styling(colorful_style)
     control.draw(canvas_ctrl, uxctrol)
@@ -159,7 +153,7 @@ def image_main():
 
     sys.exit()
 
-def svg_main():
+def svg_main(filename):
     print("WE ARE IN SVG MAIN")
     
     # We use mode=g.Mode.SVG to set up global props but avoid creating PIL images
@@ -170,10 +164,8 @@ def svg_main():
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
-    if len(sys.argv) >= 2:
-        filename = sys.argv[1]
-        for send, recv, msg in pctrl.parse_messages(filename):
-            control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+    for send, recv, msg in pctrl.parse_messages(filename):
+        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     control.apply_styling(colorful_style)
     control.draw(canvas_ctrl, uxctrol)
@@ -188,14 +180,32 @@ def svg_main():
     sys.exit()
 
 def main():
-    if len(sys.argv) >= 3:
-        if sys.argv[2] == 'y':
-            image_main()
-        elif sys.argv[2] == 's':
-            svg_main()
-        else:
-            interactive_main()
+    parser = argparse.ArgumentParser(
+        description="Process a message file and render output in different modes."
+    )
+
+    # positional argument: message file
+    parser.add_argument(
+        "message_file",
+        help="Input file with messages (msg format: {sender, receiver, \"message\"})"
+    )
+
+    # optional argument: mode
+    parser.add_argument(
+        "--mode",
+        choices=["inter", "png", "svg"],
+        default="inter",
+        help="Output mode: inter (interactive), png (image), svg"
+    )
+
+    args = parser.parse_args()
+
+    # dispatch
+    if args.mode == "png":
+        png_main(args.message_file)
+    elif args.mode == "svg":
+        svg_main(args.message_file)
     else:
-        interactive_main()
+        interactive_main(args.message_file)
 
 main()
