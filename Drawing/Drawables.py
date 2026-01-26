@@ -105,8 +105,8 @@ class Drawable:
             self.text_struct.label_x = self.posX + self.props.diff_to_text_x
             self.text_struct.label_y = self.posY + self.props.diff_to_text_y
 
-            self.text_struct.text_rect_x = text_struct.label_x
-            self.text_struct.text_rect_y = text_struct.label_y
+            self.text_struct.text_rect_x = self.text_struct.label_x
+            self.text_struct.text_rect_y = self.text_struct.label_y
 
     def set_position(self, x, y):
         self.posX = x

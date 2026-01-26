@@ -103,7 +103,7 @@ def add_vbar(control, parent=None):
     if not ref_p_south:
         return None
 
-    vbar = dr.VertBar(posX=ref_p_south.x, posY=ref_p_south.y, endX=ref_p_south.x, endY=ref_p_south.y + g.DEF_VBAR_SIZE)
+    vbar = dr.VertBar(posX=ref_p_south.x, posY=ref_p_south.y, endX=ref_p_south.x, endY=ref_p_south.y + g.global_props.vbar_tuned_size)
     vbar.mark_ref_point_used(0)
     control.add_drawable(vbar)
     parent.attach(vbar)

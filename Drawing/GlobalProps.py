@@ -1,12 +1,13 @@
 from . import BasicPoint as bp
 
 class GlobalProps:
-    def __init__(self, win_height, win_width, num_components=2, next_position=None):
+    def __init__(self, win_height, win_width, vbar_tuned_size, next_position=None):
         if next_position is None:
             next_position = bp.BasicPoint()
         self.next_position = next_position
         self.win_height = win_height
         self.win_width = win_width
+        self.vbar_tuned_size = vbar_tuned_size
         self.base_positions = []
         self.base_pos_idx = 0
         

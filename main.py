@@ -57,21 +57,35 @@ def count_unique_entities(messages):
     
     return len(unique_entities)
 
-def init(mode=g.Mode.INTERACTIVE, num_components=g.DEF_NUM_COMPONENTS):    
+def tune_vbar_size(num_messages):
+    # +1 for margin
+    return (num_messages + 1) * (g.DEF_BLOCK_SIZE + g.DEF_GAP)
+
+def init(mode=g.Mode.INTERACTIVE, messages=None):    
     canvas = None
     image_obj = None
     initial_width = None
     initial_height = None
-    
+
+    vbar_tuned_size = g.DEF_VBAR_SIZE
+    num_components = g.DEF_NUM_COMPONENTS
+    num_messages = g.DEF_NUM_MESSAGES
+
+    if messages:
+        num_components = count_unique_entities(messages)
+        num_messages = len(messages)
+
     if mode == g.Mode.INTERACTIVE:
         canvas, initial_width, initial_height = pygame_init()
     elif mode == g.Mode.PNG:
         initial_width = 3000
         initial_height = 6000
+        vbar_tuned_size = tune_vbar_size(num_messages)
         image_obj, canvas = image_init(initial_width, initial_height)
     elif mode == g.Mode.SVG:
         initial_width = 3000
         initial_height = 6000
+        vbar_tuned_size = tune_vbar_size(num_messages)
         # For SVG we don't need a canvas/image object for drawing context
         canvas = None
         image_obj = None
@@ -81,7 +95,7 @@ def init(mode=g.Mode.INTERACTIVE, num_components=g.DEF_NUM_COMPONENTS):
     #current_width = current_width * g.DEF_WIDTH_FACTOR
 
     print (current_width)
-    g.global_props = glprops.GlobalProps(current_height, current_width)
+    g.global_props = glprops.GlobalProps(current_height, current_width, vbar_tuned_size)
 
     if mode == g.Mode.INTERACTIVE:
         g.global_props.fill_in_base_positions(num_components, g.DEF_IMAGE_WIDTH_MARGIN_FACT)
@@ -97,9 +111,8 @@ def interactive_main(filename):
     print("WE ARE IN INTERACTIVE MAIN")
 
     messages = list(pctrl.parse_messages(filename))
-    num_components = count_unique_entities(messages)
 
-    screen, _, control = init(g.Mode.INTERACTIVE, num_components)
+    screen, _, control = init(g.Mode.INTERACTIVE, messages)
 
     canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.INTERACTIVE)
     canvas_ctrl.screen = screen
@@ -154,9 +167,8 @@ def png_main(filename):
     print("WE ARE IN IMAGE MAIN")
 
     messages = list(pctrl.parse_messages(filename))
-    num_components = count_unique_entities(messages)
 
-    img_canvas, image_obj, control = init(g.Mode.PNG, num_components)
+    img_canvas, image_obj, control = init(g.Mode.PNG, messages)
 
     canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.PNG)
     canvas_ctrl.img_canvas = img_canvas
@@ -177,10 +189,9 @@ def svg_main(filename):
     print("WE ARE IN SVG MAIN")
     
     messages = list(pctrl.parse_messages(filename))
-    num_components = count_unique_entities(messages)
 
     # We use mode=g.Mode.SVG to set up global props but avoid creating PIL images
-    img_canvas, image_obj, control = init(g.Mode.SVG, num_components)
+    img_canvas, image_obj, control = init(g.Mode.SVG, messages)
     
     canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.SVG)
     
