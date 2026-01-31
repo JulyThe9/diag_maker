@@ -217,7 +217,8 @@ class Arrow(Drawable):
         return self.posX < self.endX
 
     def calculate_text_label_pos(self, text_width):
-        print ('arrow calculcate')
+        if g.DEBUG:
+            print ('arrow calculate')
         rp_east = self.props.get_ref_point(Sides.E)
 
         offset = 0
@@ -265,7 +266,8 @@ class Arrow(Drawable):
 
         self.bounding_box = self.calc_bounding_box()
         x, y, width, height = self.bounding_box
-        print(f"Bounding Box - X: {x}, Y: {y}, Width: {width}, Height: {height}")
+        if g.DEBUG:
+            print(f"Bounding Box - X: {x}, Y: {y}, Width: {width}, Height: {height}")
     
     # arrow
     def calc_bounding_box(self):
@@ -362,7 +364,8 @@ class VertBar(Drawable):
 
         self.bounding_box = self.calc_bounding_box()
         x, y, width, height = self.bounding_box
-        print(f"Bounding Box - X: {x}, Y: {y}, Width: {width}, Height: {height}")
+        if g.DEBUG:
+            print(f"Bounding Box - X: {x}, Y: {y}, Width: {width}, Height: {height}")
     
     def calc_bounding_box(self):
         # Calculate the height of the bounding box as the distance between start and end points

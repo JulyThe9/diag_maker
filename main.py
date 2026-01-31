@@ -1,3 +1,5 @@
+import os
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 import pygame
 from PIL import Image, ImageDraw
 import sys
@@ -94,7 +96,7 @@ def init(mode=g.Mode.INTERACTIVE, messages=None):
     current_width, current_height = initial_width, initial_height
     #current_width = current_width * g.DEF_WIDTH_FACTOR
 
-    print (current_width)
+    print(current_width)
     g.global_props = glprops.GlobalProps(current_height, current_width, vbar_tuned_size)
 
     if mode == g.Mode.INTERACTIVE:
@@ -183,11 +185,11 @@ def png_main(filename):
     control.draw(canvas_ctrl, uxctrol)
 
     output_name = filename.rsplit('.', 1)[0] + "_out.png"
-    if DEBUG:
+    if g.DEBUG:
         output_name = "output.png"
 
     image_obj.save(output_name)
-    print(f"Saved {output_name}")
+    print(f"Diagram saved {output_name}")
 
 def svg_main(filename):
     #print("WE ARE IN SVG MAIN")
@@ -213,11 +215,11 @@ def svg_main(filename):
     height = g.global_props.win_height if hasattr(g, 'global_props') else 6000
     
     output_name = filename.rsplit('.', 1)[0] + "_out.svg"
-    if DEBUG:
+    if g.DEBUG:
         output_name = "output.png"
-        
+
     canvas_ctrl.save_svg(output_name, int(width), int(height))
-    print(f"Saved {output_name}")
+    print(f"Diagram saved {output_name}")
 
 def main():
     parser = argparse.ArgumentParser(

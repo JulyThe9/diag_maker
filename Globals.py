@@ -3,7 +3,7 @@ from enum import Enum, auto
 global_props = None
 
 # Development
-DEBUG = True
+DEBUG = False
 
 # Dimensions
 DEF_BLOCK_SIZE = 50
