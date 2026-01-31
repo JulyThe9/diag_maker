@@ -42,7 +42,7 @@ def add_block(control, parent=None, parentSide=None, blockSide=None, blockWidth 
 
 def add_vbar(control, parent=None):
     if not parent:
-        #TODO: maybe later
+        #TODO: parentless vbar?
         return None
     
     ref_p_south = parent.get_ref_point(Sides.S)

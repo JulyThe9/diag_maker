@@ -176,13 +176,12 @@ class Block(Drawable):
 
         if ux_pos_x <= mouse_pos[0] <= ux_pos_x + self.sizeX and \
             ux_pos_y <= mouse_pos[1] <= ux_pos_y + self.sizeY:
-
-            print("OVER BLOCK")
+            if g.DEBUG:
+                print("OVER BLOCK")
             res = True
 
         return res
 
-    # legowelt 2
     def draw(self, canvas_ctrl, uxctrol):
         # Draw a simple rectangle for Block
         
@@ -191,7 +190,6 @@ class Block(Drawable):
 
         canvas_ctrl.draw_rect(self.color, x, y, self.sizeX, self.sizeY)
 
-        # legowelt temp
         self.draw_text(canvas_ctrl, uxctrol)
 
 # =================================================== ARROW ===================================================
@@ -207,7 +205,7 @@ class Arrow(Drawable):
         
     def populate_ref_points(self):
         self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY))
-        self.props.add_ref_point_sides(Sides.E, BasicPoint(self.posX + self.sizeX, self.posY))
+        self.props.add_ref_point_sides(Sides.E, BasicPoint(self.endX, self.posY))
 
     def left_to_right(self):
         return self.posX < self.endX
@@ -314,11 +312,11 @@ class Arrow(Drawable):
         res = False
 
         if x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height:
-            print("OVER ARROW")
+            if g.DEBUG:
+                print("OVER ARROW")
             res = True
         return res
 
-    # legowelt 3
     def draw(self, canvas_ctrl, uxctrol):
         apply_scroll = lambda t: (uxctrol.apply_offset_x(t[0]), \
             uxctrol.apply_offset_y(t[1]))
@@ -327,7 +325,6 @@ class Arrow(Drawable):
             apply_scroll(self.end), apply_scroll(self.end), \
             apply_scroll(self.left), apply_scroll(self.right))
         
-        # legowelt temp
         self.draw_text(canvas_ctrl, uxctrol)
 
 # ================================================ LOOPEDARROW ================================================
@@ -434,7 +431,8 @@ class LoopedArrow(Drawable):
         res = False
 
         if x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height:
-            print("OVER LOOPED ARROW")
+            if g.DEBUG:
+                print("OVER LOOPED ARROW")
             res = True
         return res
 
@@ -508,11 +506,11 @@ class VertBar(Drawable):
         
         res = False
         if x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height:
-            print("OVER VERT BAR")
+            if g.DEBUG:
+                print("OVER VERT BAR")
             res = True
         return res
     
-    # legowelt 1
     def draw(self, canvas_ctrl, uxctrol):
         start = (uxctrol.apply_offset_x(self.posX), uxctrol.apply_offset_y(self.posY))
         end = (uxctrol.apply_offset_x(self.endX), uxctrol.apply_offset_y(self.endY))

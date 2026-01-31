@@ -126,7 +126,6 @@ def interactive_main(filename):
         control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
     # TODO: unit test idea
-    # print("legowelt")
     # rp = block.get_ref_point(Sides.S)
     # print(rp.x, rp.y)
     # print(vbar.posX, vbar.posY)
