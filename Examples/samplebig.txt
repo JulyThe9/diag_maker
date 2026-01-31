@@ -1,0 +1,26 @@
+{LRMS, SMCS, "9654: system diagnostic complete"}
+{SMCS, LRMS, "8120: acknowledge receipt"}
+{LRMS, SMCS, "9655: initiate data transfer"}
+{SMCS, LRMS, "8121: data transfer acknowledged"}
+{LRMS, SMCS, "9656: request system status"}
+{FMHS, SMCS, "2250: dispatch initialized"}
+{SMCS, LRMS, "8122: system status nominal"}
+{LRMS, SMCS, "9657: run calibration sequence"}
+{SMCS, LRMS, "8123: calibration sequence complete"}
+{LRMS, SMCS, "9658: deploy sensor array"}
+{SMCS, LRMS, "8124: sensor array deployment confirmed"}
+{LRMS, SMCS, "9659: start diagnostics for subsystem A"}
+{SMCS, LRMS, "8125: subsystem A diagnostics complete"}
+{LRMS, SMCS, "9660: initiate security check"}
+{FMHS, SMCS, "2250: dispatch initialized"}
+{SMCS, LRMS, "8126: security check passed"}
+{FMHS, SMCS, "2250: dispatch initialized"}
+{LRMS, SMCS, "9661: request telemetry logs"}
+{SMCS, LRMS, "8127: telemetry logs delivered"}
+{FMHS, SMCS, "2250: dispatch initialized"}
+{LRMS, SMCS, "9662: system reboot request"}
+{SMCS, LRMS, "8128: system reboot scheduled"}
+{FMHS, SMCS, "2250: dispatch initialized"}
+{LRMS, SMCS, "9663: final system verification"}
+{SMCS, LRMS, "8129: final verification complete"}
+

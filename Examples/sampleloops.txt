@@ -1,0 +1,7 @@
+{LRMS, SMCS, "9654: system diagnostic complete"}
+{SMCS, SMCS, "2250: dispatch initialized"}
+{SMCS, LRMS, "9663: final system verification"}
+{LRMS, LRMS, "8129: final verification complete"}
+{LRMS, LRMS, "8500: looped 2"}
+{LRMS, LRMS, "9000: looped again very long"}
+
