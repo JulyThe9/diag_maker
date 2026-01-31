@@ -91,7 +91,7 @@ def bar_to_bar(control, canvas_ctrl, src, dst, label = None):
             if src_rp == None:
                 break
 
-    if dst_rp == None:
+    if src_rp == None or dst_rp == None:
         return None
     
     connect_arrow = dr.Arrow(posX=src_rp.x, posY=src_rp.y, endX=dst_rp.x, endY=dst_rp.y)
@@ -99,8 +99,32 @@ def bar_to_bar(control, canvas_ctrl, src, dst, label = None):
         connect_arrow.add_text(label, canvas_ctrl)
 
     control.add_drawable(connect_arrow)
-
     src.attach(connect_arrow)
 
     connect_arrow.mark_ref_point_used(Sides.W)
     connect_arrow.mark_ref_point_used(Sides.E)
+
+def bar_to_iteslf(control, canvas_ctrl, send_bar, label):
+    if send_bar == None:
+        return None
+
+    src_rp = send_bar.get_next_ref_point(True)
+    dst_rp = send_bar.get_next_ref_point(True)
+
+    if src_rp == None or dst_rp == None:
+        return None
+
+    # dist = 50% of dist between 2 vert bar ref points on y axis
+    connect_arrow = dr.LoopedArrow(posX=src_rp.x, posY=src_rp.y, endX=dst_rp.x, endY=dst_rp.y, \
+        dist=0.5 * (g.DEF_BLOCK_SIZE + g.DEF_GAP))
+    
+    if label != None:
+        connect_arrow.add_text(label, canvas_ctrl)
+
+    control.add_drawable(connect_arrow)
+    send_bar.attach(connect_arrow)
+
+    connect_arrow.mark_ref_point_used(Sides.W)
+    connect_arrow.mark_ref_point_used(Sides.E)
+    
+

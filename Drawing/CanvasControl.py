@@ -16,19 +16,6 @@ class CanvasControl:
     def _to_svg_color(self, color):
         return f"rgb({color[0]},{color[1]},{color[2]})"
 
-    def draw_line(self, color, start, end):
-        if self.mode == g.Mode.INTERACTIVE:
-            if self.screen:
-                pygame.draw.line(self.screen, color, start, end, 2)
-        elif self.mode == g.Mode.SVG:
-            stroke = self._to_svg_color(color)
-            self.svg_elements.append(
-                f'<line x1="{start[0]}" y1="{start[1]}" x2="{end[0]}" y2="{end[1]}" '
-                f'stroke="{stroke}" stroke-width="2" />'
-            )
-        else:
-            self.img_canvas.line([start, end], fill=color, width=2)
-    
     def draw_rect(self, color, x, y, w, h):
         if self.mode == g.Mode.INTERACTIVE:
             if self.screen:
@@ -44,11 +31,20 @@ class CanvasControl:
                 fill=color
             )
 
-    def draw_arrow(self, color, start, end, head_end, head_left, head_right):
-        # shaft
-        self.draw_line(color, start, end)
+    def draw_line(self, color, start, end):
+        if self.mode == g.Mode.INTERACTIVE:
+            if self.screen:
+                pygame.draw.line(self.screen, color, start, end, 2)
+        elif self.mode == g.Mode.SVG:
+            stroke = self._to_svg_color(color)
+            self.svg_elements.append(
+                f'<line x1="{start[0]}" y1="{start[1]}" x2="{end[0]}" y2="{end[1]}" '
+                f'stroke="{stroke}" stroke-width="2" />'
+            )
+        else:
+            self.img_canvas.line([start, end], fill=color, width=2)
 
-        # arrow head
+    def draw_arrow_head(self, color, head_end, head_left, head_right):
         if self.mode == g.Mode.INTERACTIVE:
             if self.screen:
                 pygame.draw.polygon(self.screen, color, [head_end, \
@@ -61,6 +57,30 @@ class CanvasControl:
             )
         else:
             self.img_canvas.polygon([head_end, head_left, head_right], fill=color)
+
+
+    def draw_arrow(self, color, start, end, head_end, head_left, head_right):
+        # shaft
+        self.draw_line(color, start, end)
+
+        # arrow head
+        self.draw_arrow_head(color, head_end, head_left, head_right)
+
+    def draw_looped_arrow(self, color, dist, start, end, head_end, head_left, head_right):
+        # to the right
+        help_point_1 = (start[0] + dist, start[1])
+        self.draw_line(color, start, help_point_1)
+
+        # to bottom
+        help_point_2 = (help_point_1[0], end[1])
+        self.draw_line(color, help_point_1, help_point_2)
+
+        # to the left
+        self.draw_line(color, help_point_2, end)
+
+        # arrow head
+        self.draw_arrow_head(color, head_end, head_left, head_right)
+
 
     def png_bbox_to_width(self, font, text_str):
         bbox = font.getbbox(text_str)

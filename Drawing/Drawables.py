@@ -214,7 +214,7 @@ class Arrow(Drawable):
 
     def calculate_text_label_pos(self, text_width):
         if g.DEBUG:
-            print ('arrow calculate')
+            print ('arrow calculate text pos')
         rp_east = self.props.get_ref_point(Sides.E)
 
         offset = 0
@@ -273,9 +273,6 @@ class Arrow(Drawable):
         # The height of the bounding box is the height of the arrowhead triangle
         head_length = 10 * 3  # This is twice the same head length used for the arrow
         height = head_length
-        
-        # Calculate the angle for the bounding box to align with the arrow direction
-        angle = math.atan2(self.end[1] - self.posY, self.end[0] - self.posX)
 
         # Calculate the position of the bounding box
         # Center the bounding box at the start point of the arrow
@@ -333,6 +330,123 @@ class Arrow(Drawable):
         # legowelt temp
         self.draw_text(canvas_ctrl, uxctrol)
 
+# ================================================ LOOPEDARROW ================================================
+class LoopedArrow(Drawable):
+    def __init__(self, posX, posY, endX, endY, dist):
+        # Arrow specific initialization
+        super().__init__(ShapeType.ARROW, posX, posY, dist, abs(endY-posY))
+        self.endX = endX
+        self.endY = endY
+        self.dist = dist
+        self.calc_properties()
+        self.props = DrawableProps()
+        self.populate_ref_points()
+        
+    def populate_ref_points(self):
+        # legowelt TODO: do the same with arrow?
+        self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY))
+        self.props.add_ref_point_sides(Sides.E, BasicPoint(self.endX, self.endY))
+
+    def left_to_right(self):
+        return False
+
+    def calculate_text_label_pos(self, text_width):
+        if g.DEBUG:
+            print ('looped arrow calculate text pos')
+        
+        if self.props.has_text:          
+            temp_x = self.posX + self.dist
+            x = temp_x + self.dist * 2 * g.DEF_BLOCK_TEXT_X_MARG_FACT
+            y = self.posY + self.sizeY * g.DEF_BLOCK_TEXT_Y_MARG_FACT
+            self.text_struct.label_x = x
+            self.text_struct.label_y = y
+
+    def calc_properties(self):
+        # Calculate the properties needed for drawing the arrow
+        self.start = (self.posX, self.posY)
+        self.end = (self.endX, self.endY)
+
+        temp = (self.posX - 20, self.posY)
+
+        self.angle = math.atan2(temp[1] - self.start[1], temp[0] - self.start[0])
+        
+        head_length = 10
+        head_angle = math.radians(30)
+
+        self.left = (
+            self.end[0] - head_length * math.cos(self.angle + head_angle),
+            self.end[1] - head_length * math.sin(self.angle + head_angle),
+        )
+
+        self.right = (
+            self.end[0] - head_length * math.cos(self.angle - head_angle),
+            self.end[1] - head_length * math.sin(self.angle - head_angle),
+        )
+
+        self.bounding_box = self.calc_bounding_box()
+        x, y, width, height = self.bounding_box
+        if g.DEBUG:
+            print(f"Bounding Box - X: {x}, Y: {y}, Width: {width}, Height: {height}")
+    
+    # looped arrow
+    def calc_bounding_box(self):
+        # Calculate the width of the bounding box as the distance between start and end points
+
+        temp = (self.posX + self.dist, self.endY)
+        width = math.hypot(temp[0] - self.posX, temp[1] - self.posY)
+        
+        # The height of the bounding box is the height vert dist
+        # + half of height of arrow head
+        head_length = 10 * 3  # This is twice the same head length used for the arrow
+        head_height = head_length
+
+        height = abs(self.endY - self.posY) + head_height/2
+
+        # Calculate the position of the bounding box
+        # Start the bounding box at the start point of the arrow
+        bounding_x = self.posX
+        bounding_y = self.posY - head_height / 2.0 
+
+        # Return the bounding box as (x, y, width, height)
+        return (bounding_x, bounding_y, width, height)
+
+    def set_position(self, posX, posY):
+        """
+        Override the set_position method to update both the start and end points of the arrow.
+        """
+
+        # Update the starting position of the arrow
+        self.posX = posX
+        self.posY = posY
+        self.endX = self.posX
+        # because it's always from top to bottom
+        self.endY = self.posY + self.sizeY
+        self.calc_properties()
+        
+        self.set_props_text_label_pos()
+
+
+    def is_mouse_over(self, mouse_pos, uxctrol):
+        x, y, width, height = self.bounding_box
+        x = uxctrol.apply_offset_x(x)
+        y = uxctrol.apply_offset_y(y)
+
+        res = False
+
+        if x <= mouse_pos[0] <= x + width and y <= mouse_pos[1] <= y + height:
+            print("OVER LOOPED ARROW")
+            res = True
+        return res
+
+    def draw(self, canvas_ctrl, uxctrol):
+        apply_scroll = lambda t: (uxctrol.apply_offset_x(t[0]), \
+            uxctrol.apply_offset_y(t[1]))
+
+        canvas_ctrl.draw_looped_arrow(self.color, self.dist,
+            apply_scroll(self.start), apply_scroll(self.end), apply_scroll(self.end), \
+            apply_scroll(self.left), apply_scroll(self.right))
+        
+        self.draw_text(canvas_ctrl, uxctrol)
 
 
 # =================================================== VBAR ===================================================

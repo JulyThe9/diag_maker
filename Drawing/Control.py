@@ -127,7 +127,13 @@ class Control:
             recv_bar = fn.add_vbar(self, block)
             pstate.comm_entities[recv] = recv_bar
         
-        fn.bar_to_bar(self, canvas_ctrl, send_bar, recv_bar, msg)
+        if send_bar.ID < 0 or recv_bar.ID < 0:
+            print("WARNING: USING OBJ ID BEFORE IT IS SET")
+
+        if send_bar != recv_bar:
+            fn.bar_to_bar(self, canvas_ctrl, send_bar, recv_bar, msg)
+        else:
+            fn.bar_to_iteslf(self, canvas_ctrl, send_bar, msg)
         
 
 # free functions
