@@ -14,3 +14,7 @@
 !/UX/
 /UX/*
 !/UX/*.py
+
+!/Examples/
+/Examples/*
+!/Examples/*.txt
