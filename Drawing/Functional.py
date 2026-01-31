@@ -3,60 +3,6 @@ import Globals as g
 from .DrawableProps import Sides
 from . import Style
 
-def add_test(control):
-    block1 = dr.Block(posX=g.global_props.get_next_pos().x, posY=g.global_props.get_next_pos(True).y, sizeX=g.DEF_BLOCK_SIZE, sizeY=g.DEF_BLOCK_SIZE)
-    control.add_drawable(block1)  
-
-    connect_p = block1.get_ref_point(Sides.E, update=True)
-    posX = connect_p.x
-    posY = connect_p.y
-
-    # arrow1 = dr.Arrow(posX=posX, posY=posY, endX=posX+100, endY=posY)
-    arrow1 = dr.Arrow(posX=posX, posY=posY, endX=posX-100, endY=posY)
-
-    print(arrow1.props.ref_points_sides)
-
-    control.add_drawable(arrow1)
-
-    block1.attach(arrow1)
-    arrow1.mark_ref_point_used(Sides.W)
-
-    posX = arrow1.posX + arrow1.sizeX
-
-    arrow1.mark_ref_point_used(Sides.E)
-    # TODO: moving NON-horizontal line is NOT IMPLEMENTED
-    arrow2 = dr.Arrow(posX=posX, posY=posY, endX=posX+100, endY=posY)
-    control.add_drawable(arrow2)
-
-    arrow1.attach(arrow2)
-    arrow2.mark_ref_point_used(Sides.W)
-
-    vbar = add_vbar(control, block1)
-
-    add_block_to_vbar(control, vbar)
-    add_block_to_vbar(control, vbar)
-
-    return arrow2
-
-def add_test2(control):
-    # arrow2 = add_test(control)
-
-    # block = add_block(control, parent=arrow2, parentSide=Sides.E, blockSide=Sides.W)
-
-    block = add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    text1 = block.add_text("Hello")
-
-    vbar = add_vbar(control, block)
-    # block2 = add_block_to_vbar(control, vbar)
-    # block2.add_text("Goodbye")
-    
-    block2 = add_rect(control, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-    vbar2 = add_vbar(control, block2)
-
-    bar_to_bar(control, vbar, vbar2, "to right")
-    bar_to_bar(control, vbar2, vbar, "to left")
-    bar_to_bar(control, vbar, vbar2, "again to right")
-
 def add_rect(control, rectWidth, parent=None, parentSide=None, blockSide=None):
     return add_block(control, parent, parentSide, blockSide, rectWidth)
 
