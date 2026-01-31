@@ -11,7 +11,7 @@ import Drawing.Drawables as dr
 import Drawing.Control as ctrl
 import Drawing.CanvasControl as canvasctrl
 
-from Drawing.Style import colorful_style
+from Drawing.Style import colorful_style, classic_style
 
 import Drawing.GlobalProps as glprops
 import Drawing.Functional as fn
@@ -84,7 +84,8 @@ def init(mode=g.Mode.INTERACTIVE, messages=None):
     num_messages = g.DEF_NUM_MESSAGES
 
     if messages:
-        num_components = count_unique_entities(messages)
+        # + 1 for some margin
+        num_components = count_unique_entities(messages) + 1
         num_messages = count_ref_points_needed(messages)
 
     if mode == g.Mode.INTERACTIVE:
