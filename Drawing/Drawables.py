@@ -35,10 +35,6 @@ class Drawable:
         self.text_struct = TextStruct()
         self.attachedDrawables = []
 
-    def set_id(self, new_id):
-        if (self.ID < 0):
-            self.ID = new_id
-
     def attach(self, drawable):
         self.attachedDrawables.append(drawable)
 
