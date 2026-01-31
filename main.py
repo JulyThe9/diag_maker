@@ -181,12 +181,16 @@ def png_main(filename):
 
     control.apply_styling(colorful_style)
     control.draw(canvas_ctrl, uxctrol)
-    image_obj.save("output.png")
 
-    sys.exit()
+    output_name = filename.rsplit('.', 1)[0] + "_out.png"
+    if DEBUG:
+        output_name = "output.png"
+
+    image_obj.save(output_name)
+    print(f"Saved {output_name}")
 
 def svg_main(filename):
-    print("WE ARE IN SVG MAIN")
+    #print("WE ARE IN SVG MAIN")
     
     messages = list(pctrl.parse_messages(filename))
 
@@ -208,10 +212,12 @@ def svg_main(filename):
     width = g.global_props.win_width if hasattr(g, 'global_props') else 3000
     height = g.global_props.win_height if hasattr(g, 'global_props') else 6000
     
-    canvas_ctrl.save_svg("output.svg", int(width), int(height))
-    print("Saved output.svg")
-
-    sys.exit()
+    output_name = filename.rsplit('.', 1)[0] + "_out.svg"
+    if DEBUG:
+        output_name = "output.png"
+        
+    canvas_ctrl.save_svg(output_name, int(width), int(height))
+    print(f"Saved {output_name}")
 
 def main():
     parser = argparse.ArgumentParser(
@@ -243,3 +249,4 @@ def main():
         interactive_main(args.message_file)
 
 main()
+sys.exit()

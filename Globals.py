@@ -2,6 +2,9 @@ from enum import Enum, auto
 
 global_props = None
 
+# Development
+DEBUG = True
+
 # Dimensions
 DEF_BLOCK_SIZE = 50
 DEF_BLOCK_WIDTH = 100
@@ -25,7 +28,6 @@ DEF_BLOCK_TEXT_Y_MARG_FACT = 0.2
 DEF_SCROLL_SPEED_FACT = 20
 
 # Modes
-
 class Mode(Enum):
     INTERACTIVE = auto()
     PNG = auto()
