@@ -59,6 +59,16 @@ def count_unique_entities(messages):
     
     return len(unique_entities)
 
+def count_ref_points_needed(messages):
+    res = 0
+    for send, recv, _ in messages:
+        if send == recv:
+            res += 2
+        else:
+            res += 1
+
+    return res
+
 def tune_vbar_size(num_messages):
     # +1 for margin
     return (num_messages + 1) * (g.DEF_BLOCK_SIZE + g.DEF_GAP)
@@ -75,7 +85,7 @@ def init(mode=g.Mode.INTERACTIVE, messages=None):
 
     if messages:
         num_components = count_unique_entities(messages)
-        num_messages = len(messages)
+        num_messages = count_ref_points_needed(messages)
 
     if mode == g.Mode.INTERACTIVE:
         canvas, initial_width, initial_height = pygame_init()
