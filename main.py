@@ -229,7 +229,7 @@ def svg_main(filename, output_dir):
     
     output_name = filename.rsplit('.', 1)[0] + "_out.svg"
     if g.DEBUG:
-        output_name = "output.png"
+        output_name = "output.svg"
 
     output_path = output_dir / output_name
 
