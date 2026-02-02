@@ -194,8 +194,9 @@ def png_main(filename, output_dir):
 
     control.apply_styling(colorful_style)
     control.draw(canvas_ctrl, uxctrol)
-
-    output_name = filename.rsplit('.', 1)[0] + "_out.png"
+    
+    base = filename.rsplit('/', 1)[-1]
+    output_name = base.rsplit('.', 1)[0] + "_out.png"
     if g.DEBUG:
         output_name = "output.png"
 
@@ -227,14 +228,15 @@ def svg_main(filename, output_dir):
     width = g.global_props.win_width if hasattr(g, 'global_props') else 3000
     height = g.global_props.win_height if hasattr(g, 'global_props') else 6000
     
-    output_name = filename.rsplit('.', 1)[0] + "_out.svg"
+    base = filename.rsplit('/', 1)[-1]
+    output_name = base.rsplit('.', 1)[0] + "_out.svg"
     if g.DEBUG:
         output_name = "output.svg"
 
     output_path = output_dir / output_name
 
     canvas_ctrl.save_svg(output_path, int(width), int(height))
-    print(f"Diagram saved {output_path}")
+    print(f"Diagram saved {output_path.resolve()}")
 
 def main():
     parser = argparse.ArgumentParser(
