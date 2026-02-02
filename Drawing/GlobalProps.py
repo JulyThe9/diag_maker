@@ -24,7 +24,7 @@ class GlobalProps:
 
         for i in range(num_components):
             x = first_x + i * offset
-            print (x)
+            #print (x)
             self.base_positions.append(bp.BasicPoint(x,y))
 
 

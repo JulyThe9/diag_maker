@@ -4,7 +4,7 @@ import pygame
 from PIL import Image, ImageDraw
 import sys
 import argparse
-
+from pathlib import Path
 
 # Drawing
 import Drawing.Drawables as dr
@@ -107,7 +107,8 @@ def init(mode=g.Mode.INTERACTIVE, messages=None):
     current_width, current_height = initial_width, initial_height
     #current_width = current_width * g.DEF_WIDTH_FACTOR
 
-    print(current_width)
+    if g.DEBUG:
+        print(current_width)
     g.global_props = glprops.GlobalProps(current_height, current_width, vbar_tuned_size)
 
     if mode == g.Mode.INTERACTIVE:
@@ -121,7 +122,7 @@ def init(mode=g.Mode.INTERACTIVE, messages=None):
     return canvas, image_obj, control
     
 def interactive_main(filename):
-    print("WE ARE IN INTERACTIVE MAIN")
+    #print("WE ARE IN INTERACTIVE MAIN")
 
     messages = list(pctrl.parse_messages(filename))
 
@@ -175,8 +176,8 @@ def interactive_main(filename):
     pygame.quit()
     sys.exit()
 
-def png_main(filename):
-    print("WE ARE IN IMAGE MAIN")
+def png_main(filename, output_dir):
+    #print("WE ARE IN IMAGE MAIN")
 
     messages = list(pctrl.parse_messages(filename))
 
@@ -198,10 +199,12 @@ def png_main(filename):
     if g.DEBUG:
         output_name = "output.png"
 
-    image_obj.save(output_name)
-    print(f"Diagram saved {output_name}")
+    output_path = output_dir / output_name
 
-def svg_main(filename):
+    image_obj.save(output_path)
+    print(f"Diagram saved {output_path}")
+
+def svg_main(filename, output_dir):
     #print("WE ARE IN SVG MAIN")
     
     messages = list(pctrl.parse_messages(filename))
@@ -228,8 +231,10 @@ def svg_main(filename):
     if g.DEBUG:
         output_name = "output.png"
 
-    canvas_ctrl.save_svg(output_name, int(width), int(height))
-    print(f"Diagram saved {output_name}")
+    output_path = output_dir / output_name
+
+    canvas_ctrl.save_svg(output_path, int(width), int(height))
+    print(f"Diagram saved {output_path}")
 
 def main():
     parser = argparse.ArgumentParser(
@@ -250,13 +255,21 @@ def main():
         help="Output mode: inter (interactive), png (image), svg"
     )
 
+    # optiona argument: output-dir
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path.cwd(),
+        help="Output directory (default: current directory)"
+    )
+
     args = parser.parse_args()
 
     # dispatch
     if args.mode == "png":
-        png_main(args.message_file)
+        png_main(args.message_file, args.output_dir)
     elif args.mode == "svg":
-        svg_main(args.message_file)
+        svg_main(args.message_file, args.output_dir)
     else:
         interactive_main(args.message_file)
 
