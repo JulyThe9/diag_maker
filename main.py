@@ -176,7 +176,7 @@ def interactive_main(filename):
     pygame.quit()
     sys.exit()
 
-def png_main(filename, output_dir):
+def png_main(filename, output_dir, comp_order):
     #print("WE ARE IN IMAGE MAIN")
 
     messages = list(pctrl.parse_messages(filename))
@@ -205,7 +205,7 @@ def png_main(filename, output_dir):
     image_obj.save(output_path)
     print(f"Diagram saved {output_path}")
 
-def svg_main(filename, output_dir):
+def svg_main(filename, output_dir, comp_order):
     #print("WE ARE IN SVG MAIN")
     
     messages = list(pctrl.parse_messages(filename))
@@ -217,6 +217,10 @@ def svg_main(filename, output_dir):
     
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
+
+    # TODO: partial ordering instead of current (enforce ordered to go first)
+    for component in comp_order:
+        _ = control.get_or_create_block_and_vbar(pstate, canvas_ctrl, component)
 
     for send, recv, msg in messages:
         control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
@@ -237,7 +241,7 @@ def svg_main(filename, output_dir):
 
     canvas_ctrl.save_svg(output_path, int(width), int(height))
     print(f"Diagram saved {output_path.resolve()}")
-    
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -258,6 +262,13 @@ def main():
         help="Output mode: inter (interactive), png (image), svg"
     )
 
+    parser.add_argument(
+    "--comp-order",
+        type=lambda s: s.split(","),
+        default=[],
+        help="Comma-separated list of components in the desired order"
+    )
+
     # optiona argument: output-dir
     parser.add_argument(
         "--output-dir",
@@ -270,9 +281,9 @@ def main():
 
     # dispatch
     if args.mode == "png":
-        png_main(args.message_file, args.output_dir)
+        png_main(args.message_file, args.output_dir, args.comp_order)
     elif args.mode == "svg":
-        svg_main(args.message_file, args.output_dir)
+        svg_main(args.message_file, args.output_dir, args.comp_order)
     else:
         interactive_main(args.message_file)
 

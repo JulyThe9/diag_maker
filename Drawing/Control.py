@@ -92,40 +92,27 @@ class Control:
             color = style.get_color(drawable.shape_type)
             drawable.set_color(color)
 
-    # def get_drawable(self, idx):
-    #     if idx >= len(self.drawables):
-    #         return None
+    # component is general for send and recv
+    # in other words, communicating entity
+    def get_or_create_block_and_vbar(self, pstate, canvas_ctrl, component):
+        vbar = None
+        if component in pstate.comm_entities:
+            vbar = pstate.comm_entities[component]
+        else:
+            block = fn.add_rect(self, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
+            
+            if block:
+                block.add_text(component, canvas_ctrl)
 
-    #     return self.drawables[idx]
-
+            vbar = fn.add_vbar(self, block)
+            pstate.comm_entities[component] = vbar
+        return vbar
     
     def build_comm_fragment(self, pstate, canvas_ctrl, send, recv, msg):
-        send_bar = recv_bar = None
-
-        # print ("processing {0}".format(send))
-        # print (pstate.comm_entities)
-        
-        if send in pstate.comm_entities:
-            send_bar = pstate.comm_entities[send]
-        else:
-            block = fn.add_rect(self, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-            
-            if block:
-                block.add_text(send, canvas_ctrl)
-
-            send_bar = fn.add_vbar(self, block)
-            pstate.comm_entities[send] = send_bar
-        
-        if recv in pstate.comm_entities:
-            recv_bar = pstate.comm_entities[recv]
-        else:
-            block = fn.add_rect(self, g.DEF_BLOCK_SIZE * g.DEF_RECT_WIDTH_FACT)
-            
-            if block:
-                block.add_text(recv, canvas_ctrl)
-
-            recv_bar = fn.add_vbar(self, block)
-            pstate.comm_entities[recv] = recv_bar
+        if g.DEBUG:
+            print (f"legowelt size of added entities: {len(pstate.comm_entities)}")
+        send_bar = self.get_or_create_block_and_vbar(pstate, canvas_ctrl, send)
+        recv_bar = self.get_or_create_block_and_vbar(pstate, canvas_ctrl, recv)
         
         if send_bar.ID < 0 or recv_bar.ID < 0:
             print("WARNING: USING OBJ ID BEFORE IT IS SET")
@@ -158,7 +145,7 @@ class Control:
             print(f"Components between {send} and {recv} are:")
             for item in keys_inbetween:
                 print(item)
-                
+
         return vbars_inbetween
 
 # free functions
