@@ -237,6 +237,7 @@ def svg_main(filename, output_dir):
 
     canvas_ctrl.save_svg(output_path, int(width), int(height))
     print(f"Diagram saved {output_path.resolve()}")
+    
 
 def main():
     parser = argparse.ArgumentParser(
@@ -253,7 +254,7 @@ def main():
     parser.add_argument(
         "--mode",
         choices=["inter", "png", "svg"],
-        default="inter",
+        default="svg",
         help="Output mode: inter (interactive), png (image), svg"
     )
 

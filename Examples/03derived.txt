@@ -1,0 +1,10 @@
+{AUDS, DBAS, "4400: audit trail started"}
+{AUDS, LGRS, "4400: audit trail started"}
+{LGRS, AUDS, "3900: logging active"}
+{CRPT, KYMS, "2900: encryption handshake"}
+{KYMS, CRPT, "3300: key exchange complete"}
+{DBAS, BCKS, "5100: backup scheduled"}
+{BCKS, DBAS, "4700: backup ready"}
+{SCHS, TASS, "8800: schedule loaded"}
+{TASS, SCHS, "9200: tasks queued"}
+{TASS, AUDS, "xxx: tasks queued"}

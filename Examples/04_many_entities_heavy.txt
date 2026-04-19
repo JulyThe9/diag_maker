@@ -1,0 +1,62 @@
+{ORCS, SMCS, "1100: orchestration online"}
+{SMCS, ORCS, "8200: acknowledged"}
+{NTWS, FRWS, "6100: network scan initiated"}
+{FRWS, NTWS, "5800: firewall rules loaded"}
+{CRPT, KYMS, "2900: encryption handshake"}
+{KYMS, CRPT, "3300: key exchange complete"}
+{MNTS, ALTS, "7700: monitoring started"}
+{ALTS, MNTS, "4100: alert thresholds set"}
+{DBAS, BCKS, "5100: backup scheduled"}
+{BCKS, DBAS, "4700: backup ready"}
+{ORCS, NTWS, "1102: topology request"}
+{NTWS, ORCS, "6102: topology map sent"}
+{ORCS, DBAS, "1103: schema request"}
+{DBAS, ORCS, "5102: schema returned"}
+{ORCS, CRPT, "1104: session token request"}
+{CRPT, ORCS, "2902: session token issued"}
+{ORCS, MNTS, "1105: metrics request"}
+{MNTS, ORCS, "7702: metrics snapshot sent"}
+{ORCS, ALTS, "1106: alert summary request"}
+{ALTS, ORCS, "4102: no active alerts"}
+{NTWS, FRWS, "6103: inbound traffic spike"}
+{FRWS, NTWS, "5801: rate limiting applied"}
+{FRWS, ALTS, "5802: anomaly flagged"}
+{ALTS, FRWS, "4103: alert raised: traffic spike"}
+{ALTS, MNTS, "4104: escalate traffic alert"}
+{MNTS, ALTS, "7703: acknowledged"}
+{MNTS, ORCS, "7704: escalation notice sent"}
+{ORCS, FRWS, "1107: request traffic report"}
+{FRWS, ORCS, "5803: traffic report sent"}
+{ORCS, SMCS, "1108: incident opened"}
+{SMCS, ORCS, "8201: incident ID 4421 assigned"}
+{DBAS, BCKS, "5103: incremental backup triggered"}
+{BCKS, DBAS, "4701: backup in progress"}
+{BCKS, LGRS, "4702: backup log entry"}
+{LGRS, BCKS, "3900: log written"}
+{KYMS, CRPT, "3301: key rotation initiated"}
+{CRPT, KYMS, "2903: old key invalidated"}
+{CRPT, ORCS, "2904: key rotation notice"}
+{ORCS, SMCS, "1109: key rotation logged"}
+{SMCS, ORCS, "8202: acknowledged"}
+{NTWS, ORCS, "6104: topology change detected"}
+{ORCS, NTWS, "1110: topology change acknowledged"}
+{ORCS, FRWS, "1111: update firewall rules"}
+{FRWS, ORCS, "5804: rules updated"}
+{MNTS, DBAS, "7705: query performance check"}
+{DBAS, MNTS, "5104: query latency nominal"}
+{MNTS, NTWS, "7706: network latency check"}
+{NTWS, MNTS, "6105: latency 12ms"}
+{MNTS, CRPT, "7707: cipher health check"}
+{CRPT, MNTS, "2905: cipher nominal"}
+{ALTS, SMCS, "4105: alert cleared: traffic spike"}
+{SMCS, ALTS, "8203: incident 4421 closed"}
+{SMCS, ORCS, "8204: incident 4421 closure confirmed"}
+{ORCS, MNTS, "1112: resume normal monitoring"}
+{MNTS, ORCS, "7708: normal monitoring resumed"}
+{DBAS, BCKS, "5105: backup complete"}
+{BCKS, DBAS, "4703: backup verified"}
+{BCKS, LGRS, "4704: backup completion logged"}
+{LGRS, SMCS, "3901: daily log summary ready"}
+{SMCS, LGRS, "8205: log summary acknowledged"}
+{ORCS, SMCS, "1113: end-of-cycle report"}
+{SMCS, ORCS, "8206: report received"}

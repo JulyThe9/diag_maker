@@ -131,10 +131,35 @@ class Control:
             print("WARNING: USING OBJ ID BEFORE IT IS SET")
 
         if send_bar != recv_bar:
-            fn.bar_to_bar(self, canvas_ctrl, send_bar, recv_bar, msg)
+            fn.bar_to_bar(self, canvas_ctrl, send_bar, recv_bar, \
+                send, recv, pstate.comm_entities, msg)
         else:
             fn.bar_to_iteslf(self, canvas_ctrl, send_bar, msg)
-        
+   
+    def find_components_between(self, send, recv, comm_entities):
+        keys = list(comm_entities.keys())
+
+        # Find positions of send and recv
+        try:
+            i = keys.index(send)
+            j = keys.index(recv)
+        except ValueError:
+            raise ValueError("send or recv not in comm_entities")
+
+        # Determine range between them (exclude endpoints)
+        if i < j:
+            keys_inbetween = keys[i + 1:j]
+        else:
+            keys_inbetween = keys[j + 1:i]
+
+        # Collect vbars in between
+        vbars_inbetween = [comm_entities[k] for k in keys_inbetween]
+        if g.DEBUG:
+            print(f"Components between {send} and {recv} are:")
+            for item in keys_inbetween:
+                print(item)
+                
+        return vbars_inbetween
 
 # free functions
 def move_with_parent(drawable, delta_x, delta_y):
