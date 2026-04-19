@@ -84,40 +84,31 @@ def bar_to_bar(control, canvas_ctrl, src, dst, send, recv, comm_entities, label 
     if src == None or dst == None:
         return None
 
+    # getting all vbars from comm_entities[comp_name->dbar] dictionary
+    all_vbars = list(comm_entities.values())
+    try:
+        farthest_rp_inbetw = find_farthest_ref_point(all_vbars)
+    except Exception as e:
+        if g.DEBUG:
+            print(f"find_farthest_ref_point failed: {e}")
+        return
+
     src_rp = src.get_next_ref_point(True)
     dst_rp = dst.get_next_ref_point(True)
 
-    # aligning between each other
-    aligned = False
-    while src_rp.y > dst_rp.y:
-        dst_rp = dst.get_next_ref_point(True)
-        if dst_rp == None:
-            aligned = True
-            break
+    if farthest_rp_inbetw == None:
+        return None
 
-    if not aligned:
-        while src_rp.y < dst_rp.y:
-            src_rp = src.get_next_ref_point(True)
-            if src_rp == None:
-                break
+    # Advance src until it reaches/exceeds farthest_rp_inbetw.y
+    while src_rp is not None and src_rp.y < farthest_rp_inbetw.y:
+        src_rp = src.get_next_ref_point(True)
+
+    # Advance dst until it reaches/exceeds farthest_rp_inbetw.y
+    while dst_rp is not None and dst_rp.y < farthest_rp_inbetw.y:
+        dst_rp = dst.get_next_ref_point(True)
 
     if src_rp == None or dst_rp == None:
         return None
-
-    # aligning with entities inbetween src and dest
-    vbars_inbetween = \
-        control.find_components_between(send, recv, comm_entities)
-    
-    farthest_rp_inbetw = find_farthest_ref_point(vbars_inbetween)
-    if farthest_rp_inbetw:
-
-        # Advance src until it reaches/exceeds farthest_rp_inbetw.y
-        while src_rp is not None and src_rp.y < farthest_rp_inbetw.y:
-            src_rp = src.get_next_ref_point(True)
-
-        # Advance dst until it reaches/exceeds farthest_rp_inbetw.y
-        while dst_rp is not None and dst_rp.y < farthest_rp_inbetw.y:
-            dst_rp = dst.get_next_ref_point(True)
     
     # connecting aligned src_rp and dst_rp
     connect_arrow = dr.Arrow(posX=src_rp.x, posY=src_rp.y, endX=dst_rp.x, endY=dst_rp.y)
