@@ -95,11 +95,11 @@ def init(mode=g.Mode.INTERACTIVE, messages=None):
         initial_height = 6000
         vbar_tuned_size = tune_vbar_size(num_messages)
         image_obj, canvas = image_init(initial_width, initial_height)
-    elif mode == g.Mode.SVG:
+    elif mode == g.Mode.SVG or mode == g.Mode.HTML:
         initial_width = 3000
         initial_height = 6000
         vbar_tuned_size = tune_vbar_size(num_messages)
-        # For SVG we don't need a canvas/image object for drawing context
+        # For SVG/HTML we don't need a canvas/image object for drawing context
         canvas = None
         image_obj = None
 
@@ -243,6 +243,44 @@ def svg_main(filename, output_dir, comp_order):
     print(f"Diagram saved {output_path.resolve()}")
 
 
+def html_main(filename, output_dir, comp_order):
+    #print("WE ARE IN HTML MAIN")
+    
+    messages = list(pctrl.parse_messages(filename))
+
+    # We use mode=g.Mode.HTML to set up global props but avoid creating PIL images
+    img_canvas, image_obj, control = init(g.Mode.HTML, messages)
+    
+    canvas_ctrl = canvasctrl.CanvasControl(mode=g.Mode.HTML)
+    
+    pstate = pgs.GlobalState()
+    uxctrol = uxc.UXCtrl()
+
+    # TODO: partial ordering instead of current (enforce ordered to go first)
+    for component in comp_order:
+        _ = control.get_or_create_block_and_vbar(pstate, canvas_ctrl, component)
+
+    for send, recv, msg in messages:
+        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+
+    control.apply_styling(colorful_style)
+    control.draw(canvas_ctrl, uxctrol)
+    
+    # Use the dimensions from GlobalProps or the initial huge dimensions
+    width = g.global_props.win_width if hasattr(g, 'global_props') else 3000
+    height = g.global_props.win_height if hasattr(g, 'global_props') else 6000
+    
+    base = filename.rsplit('/', 1)[-1]
+    output_name = base.rsplit('.', 1)[0] + "_out.html"
+    if g.DEBUG:
+        output_name = "output.html"
+
+    output_path = output_dir / output_name
+
+    canvas_ctrl.save_html(output_path, int(width), int(height))
+    print(f"Diagram saved {output_path.resolve()}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Process a message file and render output in different modes."
@@ -257,9 +295,9 @@ def main():
     # optional argument: mode
     parser.add_argument(
         "--mode",
-        choices=["inter", "png", "svg"],
+        choices=["inter", "png", "svg", "html"],
         default="svg",
-        help="Output mode: inter (interactive), png (image), svg"
+        help="Output mode: inter (interactive), png (image), svg, html"
     )
 
     parser.add_argument(
@@ -284,6 +322,8 @@ def main():
         png_main(args.message_file, args.output_dir, args.comp_order)
     elif args.mode == "svg":
         svg_main(args.message_file, args.output_dir, args.comp_order)
+    elif args.mode == "html":
+        html_main(args.message_file, args.output_dir, args.comp_order)
     else:
         interactive_main(args.message_file)
 

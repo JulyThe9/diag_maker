@@ -32,3 +32,4 @@ class Mode(Enum):
     INTERACTIVE = auto()
     PNG = auto()
     SVG = auto()
+    HTML = auto()

@@ -20,7 +20,7 @@ class CanvasControl:
         if self.mode == g.Mode.INTERACTIVE:
             if self.screen:
                 pygame.draw.rect(self.screen, color, (x, y, w, h))
-        elif self.mode == g.Mode.SVG:
+        elif self.mode == g.Mode.SVG or self.mode == g.Mode.HTML:
             fill = self._to_svg_color(color)
             self.svg_elements.append(
                 f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{fill}" />'
@@ -35,7 +35,7 @@ class CanvasControl:
         if self.mode == g.Mode.INTERACTIVE:
             if self.screen:
                 pygame.draw.line(self.screen, color, start, end, 2)
-        elif self.mode == g.Mode.SVG:
+        elif self.mode == g.Mode.SVG or self.mode == g.Mode.HTML:
             stroke = self._to_svg_color(color)
             self.svg_elements.append(
                 f'<line x1="{start[0]}" y1="{start[1]}" x2="{end[0]}" y2="{end[1]}" '
@@ -49,7 +49,7 @@ class CanvasControl:
             if self.screen:
                 pygame.draw.polygon(self.screen, color, [head_end, \
                     head_left, head_right])
-        elif self.mode == g.Mode.SVG:
+        elif self.mode == g.Mode.SVG or self.mode == g.Mode.HTML:
             fill = self._to_svg_color(color)
             points = f"{head_end[0]},{head_end[1]} {head_left[0]},{head_left[1]} {head_right[0]},{head_right[1]}"
             self.svg_elements.append(
@@ -157,7 +157,7 @@ class CanvasControl:
     def draw_text(self, holder_id, text_struct):
         if self.mode == g.Mode.INTERACTIVE:
             self.draw_text_pygame(holder_id, text_struct)
-        elif self.mode == g.Mode.SVG:
+        elif self.mode == g.Mode.SVG or self.mode == g.Mode.HTML:
             self.draw_text_svg(holder_id, text_struct)
         else:
             self.draw_text_png(holder_id, text_struct)
@@ -174,5 +174,42 @@ class CanvasControl:
             for el in self.svg_elements:
                 f.write(f'  {el}\n')
             f.write('</svg>')
+
+    def save_html(self, filename, width, height):
+        if self.mode != g.Mode.HTML:
+            print("Warning: CanvasControl not initialized for HTML. Calling save_html does nothing.")
+            return
+
+        with open(filename, 'w') as f:
+            f.write('<!DOCTYPE html>\n')
+            f.write('<html lang="en">\n')
+            f.write('<head>\n')
+            f.write('  <meta charset="UTF-8">\n')
+            f.write('  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n')
+            f.write('  <title>Diagram</title>\n')
+            f.write('  <style>\n')
+            f.write('    body {\n')
+            f.write('      margin: 0;\n')
+            f.write('      padding: 20px;\n')
+            f.write('      display: flex;\n')
+            f.write('      justify-content: center;\n')
+            f.write('      background-color: #f5f5f5;\n')
+            f.write('      font-family: Arial, sans-serif;\n')
+            f.write('    }\n')
+            f.write('    svg {\n')
+            f.write('      background-color: white;\n')
+            f.write('      border: 1px solid #ddd;\n')
+            f.write('      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\n')
+            f.write('    }\n')
+            f.write('  </style>\n')
+            f.write('</head>\n')
+            f.write('<body>\n')
+            f.write(f'  <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">\n')
+            f.write(f'    <rect width="100%" height="100%" fill="white"/>\n')
+            for el in self.svg_elements:
+                f.write(f'    {el}\n')
+            f.write('  </svg>\n')
+            f.write('</body>\n')
+            f.write('</html>')
 
 
