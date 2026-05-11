@@ -2,6 +2,7 @@
 !*.py
 !.gitignore
 !LICENSE
+!style_settings.json
 
 !/Drawing/
 /Drawing/*
