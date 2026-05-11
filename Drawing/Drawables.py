@@ -517,4 +517,4 @@ class VertBar(Drawable):
         start = (uxctrol.apply_offset_x(self.posX), uxctrol.apply_offset_y(self.posY))
         end = (uxctrol.apply_offset_x(self.endX), uxctrol.apply_offset_y(self.endY))
 
-        canvas_ctrl.draw_line(self.color, start, end)
+        canvas_ctrl.draw_line(self.color, start, end, label=self.compLabel)

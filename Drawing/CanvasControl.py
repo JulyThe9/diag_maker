@@ -31,16 +31,40 @@ class CanvasControl:
                 fill=color
             )
 
-    def draw_line(self, color, start, end):
+    def draw_line(self, color, start, end, label=None):
         if self.mode == g.Mode.INTERACTIVE:
             if self.screen:
                 pygame.draw.line(self.screen, color, start, end, 2)
         elif self.mode == g.Mode.SVG or self.mode == g.Mode.HTML:
             stroke = self._to_svg_color(color)
-            self.svg_elements.append(
+            line_element = (
                 f'<line x1="{start[0]}" y1="{start[1]}" x2="{end[0]}" y2="{end[1]}" '
                 f'stroke="{stroke}" stroke-width="2" />'
             )
+            
+            # If label is provided (e.g., from VBar compLabel), wrap with tooltip functionality
+            if label and self.mode == g.Mode.HTML:
+                escaped_label = html.escape(label)
+                # Add invisible rect for hover area (20 pixels on each side)
+                # basically, 30 % of block width, both sides together
+                rect_width = g.DEF_BLOCK_WIDTH * g.DEF_RECT_WIDTH_MARGIN_FACT
+                rect_x = start[0] - rect_width / 2
+                rect_y = min(start[1], end[1])
+                rect_height = abs(end[1] - start[1])
+                invisible_rect = (
+                    f'<rect x="{rect_x}" y="{rect_y}" width="{rect_width}" height="{rect_height}" '
+                    f'fill="transparent" pointer-events="all" />'
+                )
+                tooltip_element = (
+                    f'<g class="vbar-group" data-label="{escaped_label}">\n'
+                    f'      {invisible_rect}\n'
+                    f'      {line_element}\n'
+                    f'      <title>{escaped_label}</title>\n'
+                    f'    </g>'
+                )
+                self.svg_elements.append(tooltip_element)
+            else:
+                self.svg_elements.append(line_element)
         else:
             self.img_canvas.line([start, end], fill=color, width=2)
 
@@ -201,14 +225,62 @@ class CanvasControl:
             f.write('      border: 1px solid #ddd;\n')
             f.write('      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);\n')
             f.write('    }\n')
+            f.write('    .vbar-tooltip {\n')
+            f.write('      position: absolute;\n')
+            f.write('      background-color: #333;\n')
+            f.write('      color: white;\n')
+            f.write('      padding: 5px 10px;\n')
+            f.write('      border-radius: 4px;\n')
+            f.write('      font-size: 12px;\n')
+            f.write('      white-space: nowrap;\n')
+            f.write('      pointer-events: none;\n')
+            f.write('      opacity: 0;\n')
+            f.write('      transition: opacity 0.2s ease-in;\n')
+            f.write('      z-index: 1000;\n')
+            f.write('    }\n')
+            f.write('    .vbar-tooltip.show {\n')
+            f.write('      opacity: 1;\n')
+            f.write('    }\n')
+            f.write('    .vbar-group {\n')
+            f.write('      cursor: pointer;\n')
+            f.write('    }\n')
+            f.write('    .vbar-group:hover line {\n')
+            f.write('      stroke-width: 3;\n')
+            f.write('    }\n')
             f.write('  </style>\n')
             f.write('</head>\n')
             f.write('<body>\n')
-            f.write(f'  <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">\n')
+            f.write(f'  <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" id="diagram-svg">\n')
             f.write(f'    <rect width="100%" height="100%" fill="white"/>\n')
             for el in self.svg_elements:
                 f.write(f'    {el}\n')
             f.write('  </svg>\n')
+            f.write('  <div id="vbar-tooltip" class="vbar-tooltip"></div>\n')
+            f.write('  <script>\n')
+            f.write('    const tooltip = document.getElementById("vbar-tooltip");\n')
+            f.write('    const svg = document.getElementById("diagram-svg");\n')
+            f.write('    \n')
+            f.write('    // Get all vbar groups\n')
+            f.write('    const vbarGroups = document.querySelectorAll(".vbar-group[data-label]");\n')
+            f.write('    \n')
+            f.write('    vbarGroups.forEach(group => {\n')
+            f.write('      group.addEventListener("mouseenter", (e) => {\n')
+            f.write('        const label = group.getAttribute("data-label");\n')
+            f.write('        const groupRect = group.getBoundingClientRect();\n')
+            f.write('        const midX = groupRect.left + groupRect.width / 2;\n')
+            f.write('        const midY = groupRect.top + groupRect.height / 2;\n')
+            f.write('        \n')
+            f.write('        tooltip.textContent = label;\n')
+            f.write('        tooltip.classList.add("show");\n')
+            f.write('        tooltip.style.left = (midX - tooltip.offsetWidth / 2) + "px";\n')
+            f.write('        tooltip.style.top = (midY - tooltip.offsetHeight - 10) + "px";\n')
+            f.write('      });\n')
+            f.write('      \n')
+            f.write('      group.addEventListener("mouseleave", () => {\n')
+            f.write('        tooltip.classList.remove("show");\n')
+            f.write('      });\n')
+            f.write('    });\n')
+            f.write('  </script>\n')
             f.write('</body>\n')
             f.write('</html>')
 
