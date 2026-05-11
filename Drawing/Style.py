@@ -1,5 +1,6 @@
 import json
-from .Drawables import ShapeType
+#from .Drawables import ShapeType
+from Drawing.ShapeType import ShapeType
 
 
 class Style:
@@ -10,6 +11,9 @@ class Style:
 
     STYLE_MAP = {}
     _current_style = None
+
+    _arrowHeadLength = 10
+    _arrowHeadAngle = 30
 
     def __init__(self, shape_color_map):
         self.shape_color_map = shape_color_map
@@ -64,6 +68,19 @@ class Style:
             cls.set_current_style(requested)
         else:
             cls.set_current_style(cls.DEFAULT_STYLE)
+
+        # -------------------------
+        # arrows
+        # -------------------------
+        cls._arrowHeadLength = style_data.get("ArrowHeadLength", cls._arrowHeadLength)
+        cls._arrowHeadAngle = style_data.get("ArrowHeadAngle", cls._arrowHeadAngle)
+    
+    @classmethod
+    def get_arrow_head_length(cls):
+        return cls._arrowHeadLength
+    @classmethod
+    def get_arrow_head_angle(cls):
+        return cls._arrowHeadAngle
 
 
 # -------------------------

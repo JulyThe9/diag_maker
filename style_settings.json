@@ -15,5 +15,8 @@
       "VERTBAR": [255, 0, 200]
     }
   },
-  "CurrentStyle": "colorful_style"
+  "CurrentStyle": "colorful_style",
+
+  "ArrowHeadLength": 15,
+  "ArrowHeadAngle": 20
 }

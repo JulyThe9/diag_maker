@@ -8,12 +8,13 @@ from .DrawableProps import DrawableProps, Sides
 from .BasicPoint import BasicPoint
 from .TextStruct import TextStruct
 
+from Drawing.ShapeType import ShapeType
+
+from Drawing.Style import Style
+import Drawing.Style as StyleModule
+
 import Globals as g
 
-class ShapeType(Enum):
-    BLOCK = "block"
-    ARROW = "arrow"
-    VERTBAR = "vertbar"
 
 # =================================================== DRAWABLE ===================================================
 class Drawable:
@@ -245,8 +246,8 @@ class Arrow(Drawable):
         self.end = (self.endX, self.endY)
         self.angle = math.atan2(self.end[1] - self.start[1], self.end[0] - self.start[0])
         
-        head_length = 10
-        head_angle = math.radians(30)
+        head_length = Style.get_arrow_head_length()
+        head_angle = math.radians(Style.get_arrow_head_angle())
 
         self.left = (
             self.end[0] - head_length * math.cos(self.angle + head_angle),
@@ -269,7 +270,7 @@ class Arrow(Drawable):
         width = math.hypot(self.end[0] - self.posX, self.end[1] - self.posY)
         
         # The height of the bounding box is the height of the arrowhead triangle
-        head_length = 10 * 3  # This is twice the same head length used for the arrow
+        head_length = Style.get_arrow_head_length() * 3  # This is twice the same head length used for the arrow
         height = head_length
 
         # Calculate the position of the bounding box
@@ -367,8 +368,8 @@ class LoopedArrow(Drawable):
 
         self.angle = math.atan2(temp[1] - self.start[1], temp[0] - self.start[0])
         
-        head_length = 10
-        head_angle = math.radians(30)
+        head_length = Style.get_arrow_head_length()
+        head_angle = math.radians(Style.get_arrow_head_angle())
 
         self.left = (
             self.end[0] - head_length * math.cos(self.angle + head_angle),

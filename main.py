@@ -208,9 +208,7 @@ def png_main(filename, output_dir, comp_order):
     image_obj.save(output_path)
     print(f"Diagram saved {output_path}")
 
-def svg_main(filename, output_dir, comp_order):
-    #print("WE ARE IN SVG MAIN")
-    
+def svg_main(filename, output_dir, comp_order): 
     messages = list(pctrl.parse_messages(filename))
 
     # We use mode=g.Mode.SVG to set up global props but avoid creating PIL images
@@ -331,7 +329,6 @@ def main():
     with open(args.style_settings, "r") as f:
         style_data = json.load(f)
         Style.load_from_json(style_data)
-
 
     # dispatch
     if args.mode == "png":
