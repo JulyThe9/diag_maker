@@ -3,6 +3,7 @@ os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 import pygame
 from PIL import Image, ImageDraw
 import sys
+import json
 import argparse
 from pathlib import Path
 
@@ -11,7 +12,8 @@ import Drawing.Drawables as dr
 import Drawing.Control as ctrl
 import Drawing.CanvasControl as canvasctrl
 
-from Drawing.Style import colorful_style, classic_style
+from Drawing.Style import Style
+import Drawing.Style as StyleModule
 
 import Drawing.GlobalProps as glprops
 import Drawing.Functional as fn
@@ -29,6 +31,7 @@ import UX.UXCtrl as uxc
  # Colors
 MISC_WHITE = (255, 255, 255)
 MISC_LINE_COLOR = (0, 0, 0)  # Black
+
 
 def pygame_init():
     # Initialize Pygame
@@ -141,8 +144,8 @@ def interactive_main(filename):
     # rp = block.get_ref_point(Sides.S)
     # print(rp.x, rp.y)
     # print(vbar.posX, vbar.posY)
-
-    control.apply_styling(colorful_style)
+    
+    control.apply_styling(Style.current())
 
     # Main loop
     running = True
@@ -192,7 +195,7 @@ def png_main(filename, output_dir, comp_order):
     for send, recv, msg in messages:
         control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
-    control.apply_styling(colorful_style)
+    control.apply_styling(Style.current())
     control.draw(canvas_ctrl, uxctrol)
     
     base = filename.rsplit('/', 1)[-1]
@@ -225,7 +228,7 @@ def svg_main(filename, output_dir, comp_order):
     for send, recv, msg in messages:
         control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
-    control.apply_styling(colorful_style)
+    control.apply_styling(Style.current())
     control.draw(canvas_ctrl, uxctrol)
     
     # Use the dimensions from GlobalProps or the initial huge dimensions
@@ -263,7 +266,7 @@ def html_main(filename, output_dir, comp_order):
     for send, recv, msg in messages:
         control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
 
-    control.apply_styling(colorful_style)
+    control.apply_styling(Style.current())
     control.draw(canvas_ctrl, uxctrol)
     
     # Use the dimensions from GlobalProps or the initial huge dimensions
@@ -307,7 +310,7 @@ def main():
         help="Comma-separated list of components in the desired order"
     )
 
-    # optiona argument: output-dir
+    # optional argument: output-dir
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -315,7 +318,21 @@ def main():
         help="Output directory (default: current directory)"
     )
 
+    # optional argument: style settings
+    parser.add_argument(
+        "--style-settings",
+        default="style_settings.json",
+        help="Path to the style settings JSON file"
+    )
+
     args = parser.parse_args()
+
+    # init common stuff (styles)
+    with open(args.style_settings, "r") as f:
+        style_data = json.load(f)
+        StyleModule.load_styles(style_data)
+
+    Style.set_current_style("colorful_style")
 
     # dispatch
     if args.mode == "png":
