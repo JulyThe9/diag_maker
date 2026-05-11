@@ -330,9 +330,8 @@ def main():
     # init common stuff (styles)
     with open(args.style_settings, "r") as f:
         style_data = json.load(f)
-        StyleModule.load_styles(style_data)
+        Style.load_from_json(style_data)
 
-    Style.set_current_style("colorful_style")
 
     # dispatch
     if args.mode == "png":
