@@ -104,7 +104,7 @@ class Control:
             if block:
                 block.add_text(component, canvas_ctrl)
 
-            vbar = fn.add_vbar(self, block)
+            vbar = fn.add_vbar(self, block, compLabel=component)
             pstate.comm_entities[component] = vbar
         return vbar
     

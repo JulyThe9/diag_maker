@@ -40,7 +40,7 @@ def add_block(control, parent=None, parentSide=None, blockSide=None, blockWidth 
     
     return block
 
-def add_vbar(control, parent=None):
+def add_vbar(control, parent=None, compLabel=None):
     if not parent:
         #TODO: parentless vbar?
         return None
@@ -49,7 +49,10 @@ def add_vbar(control, parent=None):
     if not ref_p_south:
         return None
 
-    vbar = dr.VertBar(posX=ref_p_south.x, posY=ref_p_south.y, endX=ref_p_south.x, endY=ref_p_south.y + g.global_props.vbar_tuned_size)
+    vbar = dr.VertBar(posX=ref_p_south.x, posY=ref_p_south.y, endX=ref_p_south.x, \
+        endY=ref_p_south.y + g.global_props.vbar_tuned_size, \
+        compLabel=compLabel)
+        
     vbar.mark_ref_point_used(0)
     control.add_drawable(vbar)
     parent.attach(vbar)

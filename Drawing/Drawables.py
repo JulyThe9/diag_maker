@@ -449,11 +449,13 @@ class LoopedArrow(Drawable):
 
 # =================================================== VBAR ===================================================
 class VertBar(Drawable):
-    def __init__(self, posX, posY, endX, endY):
+    def __init__(self, posX, posY, endX, endY, compLabel=None):
         # Arrow specific initialization
         super().__init__(ShapeType.VERTBAR, posX, posY, 0, abs(endY-posY))
         self.endX = endX
         self.endY = endY
+        # component (e.g. server) label on vbar
+        self.compLabel = compLabel
         self.calc_properties()
         self.props = DrawableProps(ref_points_are_list=True)
         self.populate_ref_points()
