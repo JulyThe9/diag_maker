@@ -1,0 +1,19 @@
+{
+  "Styles": 
+  {
+    "ocean_style": 
+    {
+      "BLOCK": [180, 230, 255],
+      "ARROW": [0, 120, 140],
+      "VERTBAR": [0, 120, 140]
+    },
+
+    "cyberpunk_style": 
+    {
+      "BLOCK": [40, 40, 40],
+      "ARROW": [0, 255, 180],
+      "VERTBAR": [255, 0, 200]
+    }
+  },
+  "CurrentStyle": "colorful_style"
+}
