@@ -115,7 +115,8 @@ class CanvasControl:
     def add_text(self, holder_id, text_str):
         if self.mode == g.Mode.INTERACTIVE:
             if holder_id in self.pygame_labels:
-                return
+                #TODO: why 0 if it's in the list?
+                return 0
             label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).\
                 render(text_str, True, (0, 0, 0))
             self.pygame_labels[holder_id] = label
@@ -123,7 +124,8 @@ class CanvasControl:
         else:
             # For both PNG and SVG, we use PIL logic for text measurement
             if holder_id in self.png_fonts:
-                return
+                #TODO: same: why 0 if it's in the list?
+                return 0
             else:
                 font = ImageFont.truetype('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
                 self.png_fonts[holder_id] = font
