@@ -24,13 +24,13 @@
   {
     "Font": "Roboto",
     "Size": 18,
-    "Bold": "True"
+    "Bold": true
   },
 
   "DetailsText":
   {
     "Font": "Roboto",
-    "Size": 16,
-    "Bold": "False"
+    "Size": 18,
+    "Bold": false
   }
 }

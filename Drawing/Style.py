@@ -91,14 +91,13 @@ class Style:
         cls._msg_text_style = FontStyle(
             font=msg_text_data.get("Font", "Roboto"),
             size=msg_text_data.get("Size", 18),
-            bold=msg_text_data.get("Bold", "False").lower() == "true"
+            bold=msg_text_data.get("Bold", False)
         )
-
         details_text_data = style_data.get("DetailsText", {})
         cls._details_text_style = FontStyle(
             font=details_text_data.get("Font", "Roboto"),
             size=details_text_data.get("Size", 18),
-            bold=details_text_data.get("Bold", "False").lower() == "true"
+            bold=details_text_data.get("Bold", False)
         )
             
 

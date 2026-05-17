@@ -33,7 +33,7 @@ class Drawable:
         self.sizeX = sizeX
         self.sizeY = sizeY
         self.color = (0, 0, 0)
-        self.text_struct = TextStruct()
+        self.text_struct = TextStruct(Style.get_msg_text_style())
         self.attachedDrawables = []
 
     def attach(self, drawable):
@@ -48,7 +48,7 @@ class Drawable:
 
         text_width = 0
         if self.ID >= 0:
-            text_width, self.text_height = canvas_ctrl.add_text(self.ID, text_str)
+            text_width, self.text_height = canvas_ctrl.add_text(self.ID, self.text_struct)
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
         self.text_struct.label_x, self.text_struct.label_y = \
@@ -203,7 +203,7 @@ class Arrow(Drawable):
         super().__init__(ShapeType.ARROW, posX, posY, abs(endX-posX), 0)
         self.endX = endX
         self.endY = endY
-        self.details_struct = TextStruct()
+        self.details_struct = TextStruct(Style.get_details_text_style())
         self.calc_properties()
         self.props = DrawableProps()
         self.populate_ref_points()
@@ -335,7 +335,7 @@ class Arrow(Drawable):
     # based on the fact that text_struct
     # is already calculated
     def calculate_details_label_pos(self, text_width):
-
+        offset = 0
         if text_width <= self.sizeX:
             offset = abs(self.sizeX - text_width) / 2
             if not self.left_to_right():
@@ -367,7 +367,7 @@ class Arrow(Drawable):
 
         text_width = 0
         if self.ID >= 0:
-            text_width, _ = canvas_ctrl.add_text(self.ID, text_str)
+            text_width, _ = canvas_ctrl.add_text(self.ID, self.details_struct)
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
 
@@ -406,7 +406,7 @@ class LoopedArrow(Drawable):
         self.endX = endX
         self.endY = endY
         self.dist = dist
-        self.details_struct = TextStruct()
+        self.details_struct = TextStruct(Style.get_details_text_style())
         self.calc_properties()
         self.props = DrawableProps()
         self.populate_ref_points()
@@ -530,7 +530,7 @@ class LoopedArrow(Drawable):
 
         text_width = 0
         if self.ID >= 0:
-            text_width, _ = canvas_ctrl.add_text(self.ID, text_str)
+            text_width, _ = canvas_ctrl.add_text(self.ID, self.details_struct)
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
 

@@ -117,13 +117,13 @@ class CanvasControl:
         return text_height
 
     # holder == holder of the text 
-    def add_text(self, holder_id, text_str):
-
+    def add_text(self, holder_id, text_struct):
+        text_str = text_struct.text_str
         if self.mode == g.Mode.INTERACTIVE:
             if text_str in self.pygame_labels:
                 label = self.pygame_labels[text_str]
             else:
-                label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).\
+                label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', text_struct.size).\
                     render(text_str, True, (0, 0, 0))
                 self.pygame_labels[text_str] = label
 
@@ -134,7 +134,7 @@ class CanvasControl:
             if text_str in self.png_fonts:
                 font = self.png_fonts[text_str]
             else:
-                font = ImageFont.truetype('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
+                font = ImageFont.truetype('./fonts/Roboto-VariableFont_wdth,wght.ttf', text_struct.size)
                 self.png_fonts[text_str] = font
 
             return self.png_bbox_to_width(font, text_str), \
@@ -183,9 +183,14 @@ class CanvasControl:
         y = text_struct.text_rect_y
         
         text_content = html.escape(text_struct.text_str)
+        
+        font_weight = "bold" if text_struct.bold else "normal"
         self.svg_elements.append(
             f'<text x="{x}" y="{y}" fill="black" '
-            f'font-family="Roboto" font-size="18" dominant-baseline="hanging">'
+            f'font-family="{text_struct.font}" '
+            f'font-size="{text_struct.size}" '
+            f'font-weight="{font_weight}" '
+            f'dominant-baseline="hanging">'
             f'{text_content}</text>'
         )
 

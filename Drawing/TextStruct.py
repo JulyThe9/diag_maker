@@ -2,7 +2,7 @@ from Drawing.Style import FontStyle
 
 
 class TextStruct:
-    def __init__(self, text_str="", label_x=0, label_y=0, text_rect_x=0, text_rect_y=0, font_style: FontStyle = None):
+    def __init__(self, font_style: FontStyle = None, text_str="", label_x=0, label_y=0, text_rect_x=0, text_rect_y=0):
         self.text_str = text_str
         self.label_x = label_x
         self.label_y = label_y
@@ -14,7 +14,7 @@ class TextStruct:
             self.size = font_style.Size
             self.bold = font_style.Bold
         else:
-            self.font = None
-            self.size = None
-            self.bold = None
+            self.font = "Roboto"
+            self.size = 18
+            self.bold = False
         
