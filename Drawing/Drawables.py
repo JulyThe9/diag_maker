@@ -49,7 +49,6 @@ class Drawable:
         text_width = 0
         if self.ID >= 0:
             text_width, self.text_height = canvas_ctrl.add_text(self.ID, text_str)
-            print("legoweltz {0} for {1}".format(text_width, text_str))
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
         self.text_struct.label_x, self.text_struct.label_y = \
@@ -336,8 +335,6 @@ class Arrow(Drawable):
     # based on the fact that text_struct
     # is already calculated
     def calculate_details_label_pos(self, text_width):
-        # x = self.text_struct.label_x - \
-        #     g.DEF_DETAILS_OFFSET_X_MARG_FACT * abs(self.props.diff_to_text_x)
 
         if text_width <= self.sizeX:
             offset = abs(self.sizeX - text_width) / 2
@@ -371,7 +368,6 @@ class Arrow(Drawable):
         text_width = 0
         if self.ID >= 0:
             text_width, _ = canvas_ctrl.add_text(self.ID, text_str)
-            print("legowelt {0} for {1}".format(text_width, text_str))
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
 
@@ -410,12 +406,12 @@ class LoopedArrow(Drawable):
         self.endX = endX
         self.endY = endY
         self.dist = dist
+        self.details_struct = TextStruct()
         self.calc_properties()
         self.props = DrawableProps()
         self.populate_ref_points()
         
     def populate_ref_points(self):
-        # legowelt TODO: do the same with arrow?
         self.props.add_ref_point_sides(Sides.W, BasicPoint(self.posX, self.posY))
         self.props.add_ref_point_sides(Sides.E, BasicPoint(self.endX, self.endY))
 
@@ -429,7 +425,7 @@ class LoopedArrow(Drawable):
         if self.props.has_text:
             temp_x = self.posX + self.dist
             x = temp_x + self.dist * 2 * g.DEF_BLOCK_TEXT_X_MARG_FACT
-            y = self.posY + self.sizeY * g.DEF_BLOCK_TEXT_Y_MARG_FACT
+            y = self.posY + self.sizeY * g.DEF_LOOP_ARROW_TEXT_Y_MARG_FACT
             
             return x,y
 
@@ -513,6 +509,61 @@ class LoopedArrow(Drawable):
             res = True
         return res
 
+    # based on the fact that text_struct
+    # is already calculated
+    def calculate_details_label_pos(self, text_width):
+        if g.DEBUG:
+            print ('looped arrow calculate details pos')
+        
+        if self.props.has_details:
+            temp_x = self.posX + self.dist
+            x = temp_x + self.dist * 2 * g.DEF_BLOCK_TEXT_X_MARG_FACT
+            y = self.text_struct.label_y + self.text_height * (1 + g.DEF_LOOP_ARROW_TEXT_Y_MARG_FACT)
+            
+            return x,y
+
+        return 0,0
+
+    def add_details_text(self, text_str, canvas_ctrl):
+        self.details_struct.text_str = text_str
+        self.props.has_details = True
+
+        text_width = 0
+        if self.ID >= 0:
+            text_width, _ = canvas_ctrl.add_text(self.ID, text_str)
+        else:
+            print("WARNING: ADDING TEXT BEFORE ID IS SET")
+
+        self.details_struct.label_x, self.details_struct.label_y = \
+             self.calculate_details_label_pos(text_width)
+
+        self.details_struct.text_rect_x = self.details_struct.label_x
+        self.details_struct.text_rect_y = self.details_struct.label_y
+
+        self.props.diff_to_details_x = self.details_struct.label_x - self.posX
+        self.props.diff_to_detail_y = self.details_struct.label_y - self.posY
+
+    # shared betwee class Arrow and class LoopedArrow,
+    # TODO: unify
+    def draw_details_text(self, canvas_ctrl, uxctrol):
+        if self.props.has_details:
+
+            # store un-offset
+            cur_text_rect_x = self.details_struct.text_rect_x
+            cur_text_rect_y = self.details_struct.text_rect_y
+
+            # temporarily apply offset
+            self.details_struct.text_rect_x = uxctrol.apply_offset_x(cur_text_rect_x)
+            self.details_struct.text_rect_y = uxctrol.apply_offset_y(cur_text_rect_y)
+
+            # draw with offset
+            canvas_ctrl.draw_text(self.ID, self.details_struct)
+
+            # restore un-offset
+            self.details_struct.text_rect_x = cur_text_rect_x
+            self.details_struct.text_rect_y = cur_text_rect_y
+
+
     def draw(self, canvas_ctrl, uxctrol):
         apply_scroll = lambda t: (uxctrol.apply_offset_x(t[0]), \
             uxctrol.apply_offset_y(t[1]))
@@ -522,6 +573,7 @@ class LoopedArrow(Drawable):
             apply_scroll(self.left), apply_scroll(self.right))
         
         self.draw_text(canvas_ctrl, uxctrol)
+        self.draw_details_text(canvas_ctrl, uxctrol)
 
 
 # =================================================== VBAR ===================================================

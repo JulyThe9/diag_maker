@@ -120,42 +120,43 @@ class CanvasControl:
     def add_text(self, holder_id, text_str):
 
         if self.mode == g.Mode.INTERACTIVE:
-            if holder_id in self.pygame_labels:
-                #TODO: why 0 if it's in the list?
-                return 0,0
-            label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).\
-                render(text_str, True, (0, 0, 0))
-            self.pygame_labels[holder_id] = label
+            if text_str in self.pygame_labels:
+                label = self.pygame_labels[text_str]
+            else:
+                label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).\
+                    render(text_str, True, (0, 0, 0))
+                self.pygame_labels[text_str] = label
+
             return label.get_width(), label.get_height()
 
         else:
             # For both PNG and SVG, we use PIL logic for text measurement
-            if holder_id in self.png_fonts:
-                #TODO: same: why 0 if it's in the list?
-                return 0,0
+            if text_str in self.png_fonts:
+                font = self.png_fonts[text_str]
             else:
                 font = ImageFont.truetype('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
-                self.png_fonts[holder_id] = font
-                return self.png_bbox_to_width(font, text_str), \
-                    self.png_bbox_to_height(font, text_str)
+                self.png_fonts[text_str] = font
+
+            return self.png_bbox_to_width(font, text_str), \
+                self.png_bbox_to_height(font, text_str)
                 
         return 0
 
     def get_text_width(self, holder_id, text_str=""):
         if self.mode == g.Mode.INTERACTIVE:
-            label = self.pygame_labels.get(holder_id)
+            label = self.pygame_labels.get(text_str)
             if label:
                 return label.get_width()
         else:
             # Shared logic for PIL and SVG text measurement
-            font = self.png_fonts.get(holder_id)
+            font = self.png_fonts.get(text_str)
             if font:
                 return self.png_bbox_to_width(font, text_str)
         
         return 0
 
     def draw_text_pygame(self, holder_id, text_struct): 
-        label = self.pygame_labels.get(holder_id)
+        label = self.pygame_labels.get(text_struct.text_str)
         if not label:
             return
 
@@ -168,7 +169,7 @@ class CanvasControl:
         x = text_struct.text_rect_x
         y = text_struct.text_rect_y
 
-        font = self.png_fonts.get(holder_id)
+        font = self.png_fonts.get(text_struct.text_str)
         if not font:
             return
 
