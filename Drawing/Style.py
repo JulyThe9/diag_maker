@@ -3,6 +3,13 @@ import json
 from Drawing.ShapeType import ShapeType
 
 
+class FontStyle:
+    def __init__(self, font: str, size: int, bold: bool):
+        self.Font = font
+        self.Size = size
+        self.Bold = bold
+
+
 class Style:
     # -------------------------
     # CONFIG
@@ -14,6 +21,9 @@ class Style:
 
     _arrowHeadLength = 10
     _arrowHeadAngle = 30
+
+    _msg_text_style = None
+    _details_text_style = None
 
     def __init__(self, shape_color_map):
         self.shape_color_map = shape_color_map
@@ -71,9 +81,34 @@ class Style:
 
         # -------------------------
         # arrows
-        # -------------------------
         cls._arrowHeadLength = style_data.get("ArrowHeadLength", cls._arrowHeadLength)
         cls._arrowHeadAngle = style_data.get("ArrowHeadAngle", cls._arrowHeadAngle)
+
+        # -------------------------
+        # font styles
+        # -------------------------
+        msg_text_data = style_data.get("MessageText", {})
+        cls._msg_text_style = FontStyle(
+            font=msg_text_data.get("Font", "Roboto"),
+            size=msg_text_data.get("Size", 18),
+            bold=msg_text_data.get("Bold", "False").lower() == "true"
+        )
+
+        details_text_data = style_data.get("DetailsText", {})
+        cls._details_text_style = FontStyle(
+            font=details_text_data.get("Font", "Roboto"),
+            size=details_text_data.get("Size", 18),
+            bold=details_text_data.get("Bold", "False").lower() == "true"
+        )
+            
+
+    @classmethod
+    def get_msg_text_style(cls):
+        return cls._msg_text_style
+
+    @classmethod
+    def get_details_text_style(cls):
+        return cls._details_text_style
     
     @classmethod
     def get_arrow_head_length(cls):

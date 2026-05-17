@@ -18,5 +18,19 @@
   "CurrentStyle": "colorful_style",
 
   "ArrowHeadLength": 15,
-  "ArrowHeadAngle": 20
+  "ArrowHeadAngle": 20,
+
+  "MessageText":
+  {
+    "Font": "Roboto",
+    "Size": 18,
+    "Bold": "True"
+  },
+
+  "DetailsText":
+  {
+    "Font": "Roboto",
+    "Size": 16,
+    "Bold": "False"
+  }
 }
