@@ -49,6 +49,7 @@ class Drawable:
         text_width = 0
         if self.ID >= 0:
             text_width, self.text_height = canvas_ctrl.add_text(self.ID, text_str)
+            print("legoweltz {0} for {1}".format(text_width, text_str))
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
         self.text_struct.label_x, self.text_struct.label_y = \
@@ -334,9 +335,22 @@ class Arrow(Drawable):
 
     # based on the fact that text_struct
     # is already calculated
-    def calculate_details_label_pos(self):
-        x = self.text_struct.label_x - \
-            g.DEF_DETAILS_OFFSET_X_MARG_FACT * abs(self.props.diff_to_text_x)
+    def calculate_details_label_pos(self, text_width):
+        # x = self.text_struct.label_x - \
+        #     g.DEF_DETAILS_OFFSET_X_MARG_FACT * abs(self.props.diff_to_text_x)
+
+        if text_width <= self.sizeX:
+            offset = abs(self.sizeX - text_width) / 2
+            if not self.left_to_right():
+                # two thirds from right to left
+                offset = -(offset + text_width)
+            x = self.posX + offset
+        else:
+            if self.left_to_right():
+                x = self.posX + offset
+            else:
+                x = self.endX + offset
+
         y = self.posY
         
         _, bounding_box_y, _, height = self.bounding_box
@@ -357,11 +371,12 @@ class Arrow(Drawable):
         text_width = 0
         if self.ID >= 0:
             text_width, _ = canvas_ctrl.add_text(self.ID, text_str)
+            print("legowelt {0} for {1}".format(text_width, text_str))
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
 
         self.details_struct.label_x, self.details_struct.label_y = \
-             self.calculate_details_label_pos()
+             self.calculate_details_label_pos(text_width)
 
         self.details_struct.text_rect_x = self.details_struct.label_x
         self.details_struct.text_rect_y = self.details_struct.label_y
@@ -526,7 +541,6 @@ class VertBar(Drawable):
         step = g.DEF_BLOCK_SIZE + g.DEF_GAP
         y = self.posY
         while y <= self.endY:
-            #self.props.ref_points_list.append(MarkedPoint(self.posX, y))
             self.props.add_ref_point_list(BasicPoint(self.posX, y))
             y += step
 
