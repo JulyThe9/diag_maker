@@ -19,3 +19,7 @@
 !/Examples/
 /Examples/*
 !/Examples/*.txt
+
+!/extra_styles/
+/extra_styles/*
+!/extra_styles/*.json
