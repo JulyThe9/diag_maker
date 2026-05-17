@@ -56,7 +56,7 @@ def image_init(width, height):
 def count_unique_entities(messages):
     unique_entities = set()
     
-    for send, recv, _ in messages:
+    for send, recv, *_ in messages:
         unique_entities.add(send)
         unique_entities.add(recv)
     
@@ -64,7 +64,7 @@ def count_unique_entities(messages):
 
 def count_ref_points_needed(messages):
     res = 0
-    for send, recv, _ in messages:
+    for send, recv, *_ in messages:
         if send == recv:
             res += 2
         else:
@@ -137,8 +137,8 @@ def interactive_main(filename):
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
-    for send, recv, msg in messages:
-        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+    for send, recv, msg, details in messages:
+        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg, details)
 
     # TODO: unit test idea
     # rp = block.get_ref_point(Sides.S)
@@ -192,8 +192,8 @@ def png_main(filename, output_dir, comp_order):
     pstate = pgs.GlobalState()
     uxctrol = uxc.UXCtrl()
 
-    for send, recv, msg in messages:
-        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+    for send, recv, msg, details in messages:
+        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg, details)
 
     control.apply_styling(Style.current())
     control.draw(canvas_ctrl, uxctrol)
@@ -223,8 +223,8 @@ def svg_main(filename, output_dir, comp_order):
     for component in comp_order:
         _ = control.get_or_create_block_and_vbar(pstate, canvas_ctrl, component)
 
-    for send, recv, msg in messages:
-        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+    for send, recv, msg, details in messages:
+        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg, details)
 
     control.apply_styling(Style.current())
     control.draw(canvas_ctrl, uxctrol)
@@ -261,8 +261,8 @@ def html_main(filename, output_dir, comp_order):
     for component in comp_order:
         _ = control.get_or_create_block_and_vbar(pstate, canvas_ctrl, component)
 
-    for send, recv, msg in messages:
-        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg)
+    for send, recv, msg, details in messages:
+        control.build_comm_fragment(pstate, canvas_ctrl, send, recv, msg, details)
 
     control.apply_styling(Style.current())
     control.draw(canvas_ctrl, uxctrol)

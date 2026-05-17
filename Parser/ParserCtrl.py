@@ -4,7 +4,7 @@ from . import GlobalState
 import re
 
 def parse_messages(filename):
-    pattern = re.compile(r'\{([^,]+),\s*([^,]+),\s*"(.+)"\}')
+    pattern = re.compile(r'\{([^,]+),\s*([^,]+),\s*"([^"]+)"(?:,\s*"([^"]+)")?\}')
 
     results = []
     with open(filename, 'r') as f:
@@ -18,7 +18,9 @@ def parse_messages(filename):
                 sender = match.group(1).strip()
                 receiver = match.group(2).strip()
                 message = match.group(3).strip()
-                results.append((sender, receiver, message))
+                details = match.group(4).strip() if match.group(4) else None
+
+                results.append((sender, receiver, message, details))
             else:
                 print("Skipping malformed line:", line)
 

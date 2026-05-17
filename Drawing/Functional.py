@@ -83,7 +83,9 @@ def find_farthest_ref_point(vbars):
                 farthest_rp = rp
     return farthest_rp
 
-def bar_to_bar(control, canvas_ctrl, src, dst, send, recv, comm_entities, label = None):
+def bar_to_bar(control, canvas_ctrl, src, dst, send, recv, comm_entities, \
+    label = None, extra_label = None):
+
     if src == None or dst == None:
         return None
 
@@ -117,6 +119,8 @@ def bar_to_bar(control, canvas_ctrl, src, dst, send, recv, comm_entities, label 
     connect_arrow = dr.Arrow(posX=src_rp.x, posY=src_rp.y, endX=dst_rp.x, endY=dst_rp.y)
     if label != None:
         connect_arrow.add_text(label, canvas_ctrl)
+    if extra_label != None:
+        connect_arrow.add_details_text(extra_label, canvas_ctrl)
 
     # building hierarchy
     control.add_drawable(connect_arrow)
@@ -126,7 +130,7 @@ def bar_to_bar(control, canvas_ctrl, src, dst, send, recv, comm_entities, label 
     connect_arrow.mark_ref_point_used(Sides.W)
     connect_arrow.mark_ref_point_used(Sides.E)
 
-def bar_to_iteslf(control, canvas_ctrl, send_bar, label):
+def bar_to_iteslf(control, canvas_ctrl, send_bar, label, extra_label):
     if send_bar == None:
         return None
 
@@ -142,6 +146,8 @@ def bar_to_iteslf(control, canvas_ctrl, send_bar, label):
     
     if label != None:
         connect_arrow.add_text(label, canvas_ctrl)
+    if extra_label != None:
+        connect_arrow.add_details_text(extra_label, canvas_ctrl)
 
     control.add_drawable(connect_arrow)
     send_bar.attach(connect_arrow)

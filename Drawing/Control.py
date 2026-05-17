@@ -108,7 +108,7 @@ class Control:
             pstate.comm_entities[component] = vbar
         return vbar
     
-    def build_comm_fragment(self, pstate, canvas_ctrl, send, recv, msg):
+    def build_comm_fragment(self, pstate, canvas_ctrl, send, recv, msg, details):
         if g.DEBUG:
             print (f"legowelt size of added entities: {len(pstate.comm_entities)}")
         send_bar = self.get_or_create_block_and_vbar(pstate, canvas_ctrl, send)
@@ -119,9 +119,9 @@ class Control:
 
         if send_bar != recv_bar:
             fn.bar_to_bar(self, canvas_ctrl, send_bar, recv_bar, \
-                send, recv, pstate.comm_entities, msg)
+                send, recv, pstate.comm_entities, msg, details)
         else:
-            fn.bar_to_iteslf(self, canvas_ctrl, send_bar, msg)
+            fn.bar_to_iteslf(self, canvas_ctrl, send_bar, msg, details)
 
 # free functions
 def move_with_parent(drawable, delta_x, delta_y):

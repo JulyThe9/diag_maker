@@ -200,6 +200,7 @@ class Arrow(Drawable):
         super().__init__(ShapeType.ARROW, posX, posY, abs(endX-posX), 0)
         self.endX = endX
         self.endY = endY
+        self.details_struct = TextStruct()
         self.calc_properties()
         self.props = DrawableProps()
         self.populate_ref_points()
@@ -327,6 +328,42 @@ class Arrow(Drawable):
             apply_scroll(self.left), apply_scroll(self.right))
         
         self.draw_text(canvas_ctrl, uxctrol)
+
+
+    def add_details_text(self, text_str, canvas_ctrl):
+        self.details_struct.text_str = text_str
+        self.props.has_text = True
+
+        text_width = 0
+        if self.ID >= 0:
+            text_width = canvas_ctrl.add_text(self.ID, text_str)
+        else:
+            print("WARNING: ADDING TEXT BEFORE ID IS SET")
+        self.calculate_text_label_pos(text_width)
+
+        self.details_struct.text_rect_x = self.details_struct.label_x
+        self.details_struct.text_rect_y = self.details_struct.label_y
+
+        self.props.diff_to_text_x = self.details_struct.label_x - self.posX
+        self.props.diff_to_text_y = self.details_struct.label_y - self.posY
+
+    def draw_details_text(self, canvas_ctrl, uxctrol):
+        if self.props.has_text:
+
+            # store un-offset
+            cur_text_rect_x = self.details_struct.text_rect_x
+            cur_text_rect_y = self.details_struct.text_rect_y
+
+            # temporarily apply offset
+            self.details_struct.text_rect_x = uxctrol.apply_offset_x(cur_text_rect_x)
+            self.details_struct.text_rect_y = uxctrol.apply_offset_y(cur_text_rect_y)
+
+            # draw with offset
+            canvas_ctrl.draw_text(self.ID, self.details_struct)
+
+            # restore un-offset
+            self.details_struct.text_rect_x = cur_text_rect_x
+            self.details_struct.text_rect_y = cur_text_rect_y
 
 # ================================================ LOOPEDARROW ================================================
 class LoopedArrow(Drawable):
