@@ -111,25 +111,33 @@ class CanvasControl:
         text_width  = bbox[2] - bbox[0]
         return text_width
 
+    def png_bbox_to_height(self, font, text_str):
+        bbox = font.getbbox(text_str)
+        text_height = bbox[3] - bbox[1]
+        return text_height
+
     # holder == holder of the text 
     def add_text(self, holder_id, text_str):
+
         if self.mode == g.Mode.INTERACTIVE:
             if holder_id in self.pygame_labels:
                 #TODO: why 0 if it's in the list?
-                return 0
+                return 0,0
             label = pygame.font.Font('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18).\
                 render(text_str, True, (0, 0, 0))
             self.pygame_labels[holder_id] = label
-            return label.get_width()
+            return label.get_width(), label.get_height()
+
         else:
             # For both PNG and SVG, we use PIL logic for text measurement
             if holder_id in self.png_fonts:
                 #TODO: same: why 0 if it's in the list?
-                return 0
+                return 0,0
             else:
                 font = ImageFont.truetype('./fonts/Roboto-VariableFont_wdth,wght.ttf', 18)
                 self.png_fonts[holder_id] = font
-                return self.png_bbox_to_width(font, text_str)
+                return self.png_bbox_to_width(font, text_str), \
+                    self.png_bbox_to_height(font, text_str)
                 
         return 0
 

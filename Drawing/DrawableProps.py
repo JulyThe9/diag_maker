@@ -30,6 +30,11 @@ class DrawableProps:
         self.has_text = False
         self.diff_to_text_x = 0
         self.diff_to_text_y = 0
+        self.text_height = 0
+
+        self.has_details = False
+        self.diff_to_details_x = 0
+        self.diff_to_details_y = 0
 
     def add_ref_point_sides(self, side_key: Sides, point: BasicPoint):
         self.ref_points_sides[side_key] = MarkedPoint(point, False)

@@ -48,10 +48,11 @@ class Drawable:
 
         text_width = 0
         if self.ID >= 0:
-            text_width = canvas_ctrl.add_text(self.ID, text_str)
+            text_width, self.text_height = canvas_ctrl.add_text(self.ID, text_str)
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
-        self.calculate_text_label_pos(text_width)
+        self.text_struct.label_x, self.text_struct.label_y = \
+            self.calculate_text_label_pos(text_width)
 
         self.text_struct.text_rect_x = self.text_struct.label_x
         self.text_struct.text_rect_y = self.text_struct.label_y
@@ -143,8 +144,10 @@ class Block(Drawable):
                 offset = abs(self.sizeX - text_width) / 2
 
         # print("{0} : {1}".format(self.posX,self.sizeX))
-        self.text_struct.label_x = self.posX + offset
-        self.text_struct.label_y = rp_east.y
+        x = self.posX + offset
+        y = rp_east.y
+
+        return x,y
 
     def calc_properties(self):
         # Block doesn't need any special calculations, so this method is empty.
@@ -218,7 +221,7 @@ class Arrow(Drawable):
         rp_east = self.props.get_ref_point(Sides.E)
 
         offset = 0
-        x = 0
+        x = y = 0
         if self.props.has_text:
             if text_width <= self.sizeX:
                 offset = abs(self.sizeX - text_width) / 2
@@ -238,8 +241,7 @@ class Arrow(Drawable):
         _, bounding_box_y, _, height = self.bounding_box
         y = bounding_box_y - height * g.DEF_BLOCK_TEXT_Y_MARG_FACT
 
-        self.text_struct.label_x = x
-        self.text_struct.label_y = y
+        return x,y
 
     def calc_properties(self):
         # Calculate the properties needed for drawing the arrow
@@ -328,27 +330,47 @@ class Arrow(Drawable):
             apply_scroll(self.left), apply_scroll(self.right))
         
         self.draw_text(canvas_ctrl, uxctrol)
+        self.draw_details_text(canvas_ctrl, uxctrol)
 
+    # based on the fact that text_struct
+    # is already calculated
+    def calculate_details_label_pos(self):
+        x = self.text_struct.label_x - \
+            g.DEF_DETAILS_OFFSET_X_MARG_FACT * abs(self.props.diff_to_text_x)
+        y = self.posY
+        
+        _, bounding_box_y, _, height = self.bounding_box
+
+        # should be > 0 if the pre-condition holds
+        if self.text_height > 0:
+            true_dist_to_msg = abs(self.props.diff_to_text_y) - self.text_height
+            y = self.posY + true_dist_to_msg * (1 + g.DEF_BLOCK_TEXT_Y_MARG_FACT)
+        else:
+            y = self.posY + height * g.DEF_BLOCK_TEXT_Y_MARG_FACT 
+
+        return x,y
 
     def add_details_text(self, text_str, canvas_ctrl):
         self.details_struct.text_str = text_str
-        self.props.has_text = True
+        self.props.has_details = True
 
         text_width = 0
         if self.ID >= 0:
-            text_width = canvas_ctrl.add_text(self.ID, text_str)
+            text_width, _ = canvas_ctrl.add_text(self.ID, text_str)
         else:
             print("WARNING: ADDING TEXT BEFORE ID IS SET")
-        self.calculate_text_label_pos(text_width)
+
+        self.details_struct.label_x, self.details_struct.label_y = \
+             self.calculate_details_label_pos()
 
         self.details_struct.text_rect_x = self.details_struct.label_x
         self.details_struct.text_rect_y = self.details_struct.label_y
 
-        self.props.diff_to_text_x = self.details_struct.label_x - self.posX
-        self.props.diff_to_text_y = self.details_struct.label_y - self.posY
+        self.props.diff_to_details_x = self.details_struct.label_x - self.posX
+        self.props.diff_to_detail_y = self.details_struct.label_y - self.posY
 
     def draw_details_text(self, canvas_ctrl, uxctrol):
-        if self.props.has_text:
+        if self.props.has_details:
 
             # store un-offset
             cur_text_rect_x = self.details_struct.text_rect_x
@@ -389,12 +411,14 @@ class LoopedArrow(Drawable):
         if g.DEBUG:
             print ('looped arrow calculate text pos')
         
-        if self.props.has_text:          
+        if self.props.has_text:
             temp_x = self.posX + self.dist
             x = temp_x + self.dist * 2 * g.DEF_BLOCK_TEXT_X_MARG_FACT
             y = self.posY + self.sizeY * g.DEF_BLOCK_TEXT_Y_MARG_FACT
-            self.text_struct.label_x = x
-            self.text_struct.label_y = y
+            
+            return x,y
+
+        return 0,0
 
     def calc_properties(self):
         # Calculate the properties needed for drawing the arrow
