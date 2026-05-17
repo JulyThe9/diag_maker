@@ -1,0 +1,51 @@
+{
+  "Styles": {
+    "ocean_style": {
+      "BLOCK": [
+        180,
+        230,
+        255
+      ],
+      "ARROW": [
+        0,
+        120,
+        140
+      ],
+      "VERTBAR": [
+        0,
+        120,
+        140
+      ]
+    },
+    "cyberpunk_style": {
+      "BLOCK": [
+        40,
+        40,
+        40
+      ],
+      "ARROW": [
+        0,
+        255,
+        180
+      ],
+      "VERTBAR": [
+        255,
+        0,
+        200
+      ]
+    }
+  },
+  "CurrentStyle": "colorful_style",
+  "ArrowHeadLength": 15,
+  "ArrowHeadAngle": 20,
+  "MessageText": {
+    "Font": "Nimbus Sans",
+    "Size": 22,
+    "Bold": true
+  },
+  "DetailsText": {
+    "Font": "monospace",
+    "Size": 19,
+    "Bold": false
+  }
+}
